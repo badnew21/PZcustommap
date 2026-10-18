@@ -1,0 +1,4 @@
+# Build output: bitmaps, lot files and the finished mod run to gigabytes.
+work/
+__pycache__/
+*.pyc

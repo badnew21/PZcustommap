@@ -1,0 +1,3 @@
+# Install into KnoxMap's own environment (.venv in the KnoxMap folder), which
+# already has numpy, pillow, shapely, pyproj and requests.
+pyarrow>=15
