@@ -1,20 +1,31 @@
-# Isle Royale for Project Zomboid
+# Real places for Project Zomboid
 
-A Build 42 map of Isle Royale National Park, Michigan, at one tile to the
-metre. It covers the whole island and its outer islands, from the Rock of Ages
-lighthouse in the southwest to Passage Island in the northeast: about 570 km² of
-land.
+Build 42 maps of real places at one tile to the metre, made with
+[KnoxMap](https://github.com/badnew21/KnoxmapDM) from
+[Overture Maps](https://overturemaps.org) data. KnoxMap itself is not changed.
+
+| Map | What it is | Download |
+|---|---|---|
+| [Isle Royale](#isle-royale) | Isle Royale National Park, Michigan: 570 km² of island wilderness in Lake Superior | `release/IsleRoyale.7z.001`–`.005` (425 MB, 11 GB unpacked) |
+| [Evanston](#evanston) | Evanston, Illinois: the whole city inside its real boundary, on Lake Michigan | `release/Evanston.7z` (41 MB, 690 MB unpacked) |
+
+The two sit side by side in the game world, so both mods can be installed at
+once. See [Installing](#installing) for how to put one in the game.
+
+# Isle Royale
+
+A map of Isle Royale National Park, Michigan, at one tile to the metre. It
+covers the whole island and its outer islands, from the Rock of Ages
+lighthouse in the southwest to Passage Island in the northeast: about 570 km²
+of land.
 
 ![The whole map](docs/overview.png)
 
 ![Rock Harbor at one pixel per tile](docs/rock_harbor.png)
 
-It is built with [KnoxMap](https://github.com/badnew21/KnoxmapDM), which turns
-real map data into Project Zomboid maps. KnoxMap is made for towns of a few
-square kilometres, and the island is 86 km long once it is laid out on the tile
-grid, so this repository adds a pipeline that hands KnoxMap the island one
-piece at a time and stitches the pieces back together. KnoxMap itself is not
-changed.
+KnoxMap is made for towns of a few square kilometres, and the island is 86 km
+long once it is laid out on the tile grid, so the pipeline hands KnoxMap the
+island one piece at a time and stitches the pieces back together.
 
 ## What is on the map
 
@@ -62,24 +73,7 @@ the campgrounds.
   left out until someone checks them in the game (`pipeline/rules.py`).
 - **There is no elevation.** Build 42 maps are flat, so the ridges show only as
   bare rock and scrub.
-- **The map is large.** See [Size](#size).
-
-## Installing the ready-made mod
-
-The finished mod is in [`release/`](release) as a split 7-Zip archive:
-`IsleRoyale.7z.001`, `.002` and so on.
-
-1. Download every part into one folder.
-2. Open `IsleRoyale.7z.001` with [7-Zip](https://www.7-zip.org) (on Linux,
-   `7z x IsleRoyale.7z.001`). It reads the other parts by itself.
-3. Extract the `IsleRoyale` folder into your Zomboid mods folder:
-   `%USERPROFILE%\Zomboid\mods` on Windows, `~/Zomboid/mods` on Linux and
-   macOS. Unpacked it is 11 GB.
-4. Start Project Zomboid (Build 42), enable **Isle Royale** under Mods, and
-   start a **new** game on it.
-
-Read `HOW TO PLAY.txt` in the mod folder first: a map this big needs more
-memory than the game gives itself by default.
+- **The map is large.** See [Size](#size) below.
 
 ## Building it
 
@@ -176,11 +170,99 @@ and each building stands in a small grass clearing.
 Project Zomboid needs extra memory for a map this size. KnoxMap writes a
 `HOW TO PLAY.txt` into the mod that says how to give the game more.
 
-## Credits and licences
+# Evanston
+
+Evanston, Illinois, at one tile to the metre: the whole city inside its real
+boundary, about 20 km², from the Lake Michigan shore to the North Shore
+Channel.
+
+![Evanston](docs/evanston.png)
+
+![Northwestern's lakefill and lagoon at one pixel per tile](docs/evanston_northwestern.png)
+
+A town this size is what KnoxMap is made for, so it runs KnoxMap's own steps
+the way the app does. `pipeline/build_town.py` feeds it Overture Maps data
+instead of a live OpenStreetMap download.
+
+## What is on the map
+
+- **Every street**, at its real width, with pavements and kerbs. KnoxMap lays
+  the streets in straight runs and 45° corners, like the game's own map.
+- **21,582 buildings**, each furnished: 16,042 houses, 3,341 blocks of flats,
+  588 shops, 179 school buildings, 55 churches, garages and sheds. Heights are
+  real for 87% of them, up to 14 storeys downtown.
+- **Shops and businesses inside them**: about 3,700 of Overture's places become
+  the restaurants, cafes, bars, groceries, pharmacies, banks, clinics, salons,
+  gyms and offices knoxbuild fits out. 425 buildings are furnished this way.
+- **Northwestern University**, downtown, the lakefront parks and beaches, and
+  Calvary Cemetery.
+- **The CTA Purple Line and the Metra tracks**, with 47 bridges where roads
+  and rail cross over each other.
+- **22,146 parking spots**, so cars spawn on the streets and in the lots.
+- **Zombies by population**, from KnoxMap's estimate of who lived and worked in
+  each building. It is a city, so there are a lot of them: about 41% of the
+  map's chunks have some.
+- **An in-game map (M)** with 521 named streets.
+
+### Things to know
+
+- **The map stops at the city line.** Outside Evanston's boundary, KnoxMap
+  turns the neighbouring towns (Skokie, Wilmette, Chicago's Rogers Park) back
+  into open ground. The main roads carry on across it.
+- **The streets are slightly simplified.** KnoxMap's "Knox County roads"
+  setting is on, so curves such as Sheridan Road become straight runs with 45°
+  corners, a few metres off their real line.
+- **Interiors are generic.** Rooms suit what a building is, not the real
+  building's layout.
+- **The data is Overture's.** Overture Maps is OpenStreetMap plus extras. The
+  buildings and streets are complete, but businesses only appear where Overture
+  places a point inside the building.
+
+## Size
+
+| | |
+|---|---|
+| Map | 5,700 × 6,000 tiles, 545 Build 42 cells |
+| Mod on disk | 690 MB |
+| Build time | render 2 min, knoxbuild 7 min, compile 15 min (4 cores) |
+
+## Building it
+
+```sh
+$KNOXMAP_DIR/.venv/bin/python pipeline/build_town.py evanston --mods-dir ~/Zomboid/mods
+```
+
+The stages are `fetch`, `render`, `buildings`, `compile` and `mod`. The
+Overture data for Evanston is checked in under `data/evanston`. Another town
+can be added to `TOWNS` in `pipeline/build_town.py` with its name in
+Overture's divisions, a box to fetch, KnoxMap settings and a free spot in the
+world.
+
+# Installing
+
+Both maps are in [`release/`](release) as 7-Zip archives. Isle Royale is split
+into five parts (`IsleRoyale.7z.001` to `.005`) to stay under GitHub's file
+size limit.
+
+1. Download the archive. For Isle Royale, download every part into one folder.
+2. Open it with [7-Zip](https://www.7-zip.org): `Evanston.7z`, or
+   `IsleRoyale.7z.001`, which reads the other parts by itself. On Linux, use
+   `7z x <file>`.
+3. Extract the folder inside (`Evanston` or `IsleRoyale`) into your Zomboid
+   mods folder: `%USERPROFILE%\Zomboid\mods` on Windows, `~/Zomboid/mods` on
+   Linux and macOS.
+4. Start Project Zomboid (Build 42), enable the map under Mods, and start a
+   **new** game on it.
+
+Read `HOW TO PLAY.txt` in the mod folder first. Maps this size need more
+memory than the game gives itself by default, and the file says how to raise
+it.
+
+# Credits and licences
 
 - Map data © OpenStreetMap contributors, under the
   [ODbL](https://www.openstreetmap.org/copyright), as published by Overture
-  Maps.
+  Maps. Evanston's boundary is from Overture Maps' divisions theme.
 - Forest cover © ESA WorldCover project 2021, contains modified Copernicus
   Sentinel data, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/),
   via Overture Maps.
@@ -190,5 +272,6 @@ Project Zomboid needs extra memory for a map this size. KnoxMap writes a
 - Project Zomboid is a trademark of The Indie Stone. This is an unofficial fan
   map and contains no game files.
 
-Isle Royale is a real national park and a fragile one. The zombies are made
-up. The wolves and moose are not, and they are not in the game either.
+These are real places. The zombies are made up, and so is everything inside
+the buildings. Isle Royale's wolves and moose are real, but they are not in
+the game.

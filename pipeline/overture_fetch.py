@@ -40,7 +40,10 @@ TYPES = {
     "segment": "transportation",
     "building": "buildings",
     "place": "places",
+    "division_area": "divisions",
 }
+
+LOCAL_DIVISIONS = ["locality", "localadmin", "borough", "macrohood", "neighborhood", "microhood"]
 
 _local = threading.local()
 
@@ -168,6 +171,10 @@ def fetch_file(url: str, size: int, box: tuple[float, float, float, float]) -> p
                    pc.and_(pc.less_equal(pc.struct_field(bb, "ymin"), north),
                            pc.greater_equal(pc.struct_field(bb, "ymax"), south)))
     t = t.filter(mask)
+    if "subtype" in t.column_names and url.split("/type=")[1].startswith("division_area"):
+        # A town's outline is all that is wanted; the countries and states that
+        # reach into every box are megabytes each.
+        t = t.filter(pc.is_in(t.column("subtype"), value_set=pa.array(LOCAL_DIVISIONS)))
     return t if t.num_rows else None
 
 

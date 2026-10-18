@@ -26,7 +26,6 @@ import os
 import re
 import shutil
 import struct
-import subprocess
 import sys
 import time
 from concurrent import futures
@@ -52,8 +51,6 @@ FETCH_BOX = (47.80, -89.42, 48.27, -88.28)
 
 STRIP = 2400          # frame tiles per terrain strip; ~4 GB of renderer at a time
 WORLD_ORIGIN = (70, 0)  # KnoxMap's (and knoxlots') world origin, in 300-tile cells
-SIDE = 256            # a Build 42 cell
-ROW_BATCH = 4         # rows of cells compiled before the sources are cleared away
 SHORE_CELLS = 1       # open-water cells kept round anything that is not water
 
 
@@ -287,145 +284,22 @@ def stage_papermap(a) -> None:
         shutil.copy2(max(sorted(caches), key=size), path("_guncache.json"))
 
 
-def keep_cells(fr) -> set[tuple[int, int]]:
-    """Cells to compile: every one with anything but water, and SHORE_CELLS of
-    open water round them. The rest of the lake is left out of the map."""
-    lm, w, h = open_bmp(path(".bmp"))
-    ox = WORLD_ORIGIN[0] * isle.CELL
-    xs = range(ox // SIDE, (ox + w - 1) // SIDE + 1)
-    ys = range(0, (h - 1) // SIDE + 1)
-    land = np.zeros((len(ys), len(xs)), bool)
-    water = np.array([255, 138, 0], np.uint8)        # BGR
-    for j, cy in enumerate(ys):
-        band = lm[cy * SIDE:min(h, cy * SIDE + SIDE)]
-        rows = band[:, :w * 3].reshape(band.shape[0], w, 3)
-        notwater = (rows != water).any(axis=2).any(axis=0)
-        for i, cx in enumerate(xs):
-            a, b = max(0, cx * SIDE - ox), min(w, cx * SIDE - ox + SIDE)
-            land[j, i] = notwater[a:b].any()
-    keep = land.copy()
-    for _ in range(SHORE_CELLS):
-        k = keep.copy()
-        k[1:] |= keep[:-1]
-        k[:-1] |= keep[1:]
-        k[:, 1:] |= keep[:, :-1]
-        k[:, :-1] |= keep[:, 1:]
-        k[1:, 1:] |= keep[:-1, :-1]
-        k[:-1, :-1] |= keep[1:, 1:]
-        k[1:, :-1] |= keep[:-1, 1:]
-        k[:-1, 1:] |= keep[1:, :-1]
-        keep = k
-    del lm
-    return {(xs[i], ys[j]) for j, i in zip(*np.nonzero(keep))}
-
-
-def _compile_row(rules_file: str, *args) -> int:
-    """map_source's row of cells, with the island's own Rules.txt (rules.py).
-    Set here, in the worker, because a worker started fresh (as on Windows)
-    would not see it set in the parent."""
-    from tools import map_source
-    map_source.rules_path = lambda: rules_file
-    return map_source._row(*args)
-
-
 def stage_compile(a) -> None:
-    sys.path.insert(0, window.isle.KNOXMAP)
-    from tools import map_source
-    from tools.compile_map import knoxlots_exe
-    from knoxbuild.buildheader import placed_rooms
-    from knoxbuild.buildtiles import parse_tbx
-    fr = window.frame()
-    exe = knoxlots_exe()
-    if exe is None:
-        raise SystemExit("knoxlots not found: cargo build --release in rust/knoxlots")
+    import lots
     import rules
+    from tools import map_source
+    ox = WORLD_ORIGIN[0] * isle.CELL
     rules_file = rules.make_rules(map_source.rules_path(), os.path.join(WORK, "rules"))
-    keep = keep_cells(fr)
-    say(f"compile: {len(keep)} cells to write")
-    lots_dir = os.path.join(PROJECT, "lots")
-    os.makedirs(lots_dir, exist_ok=True)
-    done_file = os.path.join(WORK, "compile_done.json")
-    done = set(json.load(open(done_file))) if os.path.exists(done_file) else set()
-
-    # The building tables, read once, as make_map_source does.
-    lots = map_source.read_lots(PROJECT)
-    parsed = [(parse_tbx(open(os.path.join(PROJECT, "buildings", f"{t}.tbx"), encoding="utf-8").read()),
-               tx, ty, lv) for t, tx, ty, lv, _w, _h in lots]
-    placed = placed_rooms([(b, tx, ty, lv) for b, tx, ty, lv in parsed if b.floors])
-    reach = [(b.width, b.height) for b, *_ in parsed]
-    del parsed
-
-    rows = sorted({cy for _cx, cy in keep})
-    todo = [cy for cy in rows if cy not in done]
-    size = (fr.width, fr.height)
-    for start in range(0, len(todo), ROW_BATCH):
-        batch = todo[start:start + ROW_BATCH]
-        src = os.path.join(WORK, "kcell")
-        out = os.path.join(WORK, "kcell_lots")
-        shutil.rmtree(src, ignore_errors=True)
-        shutil.rmtree(out, ignore_errors=True)
-        os.makedirs(src)
-        jobs = []
-        with futures.ProcessPoolExecutor(max_workers=a.workers) as pool:
-            for cy in batch:
-                lo, hi = cy * SIDE - map_source.MARGIN, cy * SIDE + SIDE + map_source.MARGIN
-                band = [(t, tx, ty, lv) for (t, tx, ty, lv, _w, _h), (_bw, bh) in zip(lots, reach)
-                        if ty - map_source.MARGIN < hi and ty + bh + map_source.MARGIN > lo]
-                jobs.append(pool.submit(_compile_row, rules_file, PROJECT, src, cy, band, placed,
-                                        1, True, size))
-            for j in jobs:
-                j.result()
-        for f in os.listdir(src):
-            m = re.match(r"cell_(\d+)_(\d+)\.kcell", f)
-            if m and (int(m[1]), int(m[2])) not in keep:
-                os.remove(os.path.join(src, f))
-        shutil.copy2(path("_ZombieSpawnMap.bmp"), os.path.join(src, "spawn.bmp"))
-        with open(os.path.join(src, "source.txt"), "w") as f:
-            f.write("format = knoxlots-source 1\n"
-                    f"origin_x = {WORLD_ORIGIN[0] * isle.CELL}\norigin_y = {WORLD_ORIGIN[1] * isle.CELL}\n"
-                    "spawn_map = spawn.bmp\n")
-        r = subprocess.run([str(exe), "compile", src, out, "--threads", str(a.workers)],
-                           capture_output=True, text=True)
-        if r.returncode:
-            raise SystemExit(f"knoxlots failed: {r.stderr[-2000:]}")
-        for f in os.listdir(out):
-            shutil.move(os.path.join(out, f), os.path.join(lots_dir, f))
-        done.update(batch)
-        json.dump(sorted(done), open(done_file, "w"))
-        say(f"compile: rows {batch[0]}-{batch[-1]} done ({len(done)} of {len(rows)} rows)")
-    shutil.rmtree(os.path.join(WORK, "kcell"), ignore_errors=True)
-    shutil.rmtree(os.path.join(WORK, "kcell_lots"), ignore_errors=True)
+    keep = lots.keep_cells(path(".bmp"), ox, SHORE_CELLS)
+    lots.compile_project(PROJECT, ox, keep, a.workers, WORK,
+                         os.path.join(WORK, "compile_done.json"), rules_file, say)
 
 
 def stage_mod(a) -> None:
-    sys.path.insert(0, window.isle.KNOXMAP)
-    from tools import make_map_mod
+    import lots
     import papermap
     mods = a.mods_dir or os.path.join(WORK, "mod")
-    os.makedirs(mods, exist_ok=True)
-
-    # The lot files are about 10 GB, and the packager copies them. Linked
-    # instead where the mod folder is on the same drive, they cost nothing
-    # twice; nothing writes to them after the compile.
-    copy2 = shutil.copy2
-
-    def link_or_copy(src, dst, **kw):
-        if src.endswith((".lotpack", ".lotheader", ".bin")):
-            try:
-                if os.path.exists(dst):
-                    os.remove(dst)
-                os.link(src, dst)
-                return dst
-            except OSError:
-                pass
-        return copy2(src, dst, **kw)
-
-    make_map_mod.shutil.copy2 = link_or_copy
-    try:
-        root, n, extras = make_map_mod.package(PROJECT, TITLE, MOD_ID, mods_dir=mods,
-                                               description=papermap.DESCRIPTION)
-    finally:
-        make_map_mod.shutil.copy2 = copy2
+    root, n, extras = lots.package(PROJECT, TITLE, MOD_ID, mods, papermap.DESCRIPTION)
     papermap.write_mod_extras(root)
     say(f"mod: {root}, {n} cells")
     for e in extras:
