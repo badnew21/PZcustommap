@@ -154,7 +154,7 @@ and each building stands in a small grass clearing.
 | Build 42 cells compiled | 10,975 (of 22,500 in the frame; the rest are open lake) |
 | Buildings | 198, plus their fences and docks (286 lots), in 25 clusters from Rock of Ages to Passage Island |
 | Mod on disk | 11 GB |
-| Build time | terrain 14 min, buildings 1 min, compile 24 min (4 cores) |
+| Build time | terrain 14 min, buildings 1 min, compile 27 min (4 cores) |
 
 Project Zomboid needs extra memory for a map this size. KnoxMap writes a
 `HOW TO PLAY.txt` into the mod that says how to give the game more.
