@@ -64,10 +64,27 @@ the campgrounds.
   bare rock and scrub.
 - **The map is large.** See [Size](#size).
 
+## Installing the ready-made mod
+
+The finished mod is in [`release/`](release) as a split 7-Zip archive:
+`IsleRoyale.7z.001`, `.002` and so on.
+
+1. Download every part into one folder.
+2. Open `IsleRoyale.7z.001` with [7-Zip](https://www.7-zip.org) (on Linux,
+   `7z x IsleRoyale.7z.001`). It reads the other parts by itself.
+3. Extract the `IsleRoyale` folder into your Zomboid mods folder:
+   `%USERPROFILE%\Zomboid\mods` on Windows, `~/Zomboid/mods` on Linux and
+   macOS. Unpacked it is 11 GB.
+4. Start Project Zomboid (Build 42), enable **Isle Royale** under Mods, and
+   start a **new** game on it.
+
+Read `HOW TO PLAY.txt` in the mod folder first: a map this big needs more
+memory than the game gives itself by default.
+
 ## Building it
 
-The finished mod is 11 GB, too big for a git repository, so you build it
-yourself. Nothing has to be done by hand. On 4 cores and 16 GB of memory the
+You only need this to change the map or rebuild it from fresher data.
+Nothing has to be done by hand. On 4 cores and 16 GB of memory the
 whole build took about 40 minutes. It needs about 20 GB of free disk: 9 GB for
 the two island-wide bitmaps and 11 GB for the lot files. On the same drive,
 the mod folder hard-links the lot files instead of copying them.
