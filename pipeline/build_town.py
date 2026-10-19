@@ -54,6 +54,30 @@ TOWNS = {
                         "Metra, and every street and building furnished by what is in it. "
                         "Made from Overture Maps (OpenStreetMap) with KnoxMap."),
     },
+    # A trial of the closest match KnoxMap can make to the real buildings:
+    # every outline at its real angle ("real" alignment, where the default
+    # squares most of them to the grid), the streets where they are rather
+    # than in straight runs (so the buildings beside them do not move), and
+    # heights uncapped. North Evanston round Central Street: the shops, both
+    # stations, Evanston Hospital and Ryan Field.
+    "evanston_central": {
+        "name": "EvanstonCentral",
+        "title": "Evanston, IL - Central Street (true-to-life test)",
+        "mod_id": "EvanstonCentral",
+        "data": "evanston",
+        "outline": "Evanston",
+        "clip": (42.0575, -87.7120, 42.0705, -87.6760),
+        "fetch": (42.012, -87.745, 42.078, -87.650),
+        "settings": {"preset": "suburb", "max_levels": 30, "apartment_chance": 0.35,
+                     "apartment_footprint": 300, "building_alignment": "real",
+                     "straight_roads": 0},
+        # Past Evanston's 19 cells (358-376); even, see Town.__init__.
+        "origin": (380, 0),
+        "description": ("North Evanston round Central Street, at one tile to the metre, built "
+                        "as close to the real buildings as KnoxMap gets: real outlines and "
+                        "angles, real street lines and real heights. Made from Overture Maps "
+                        "(OpenStreetMap) with KnoxMap."),
+    },
 }
 
 
@@ -65,7 +89,11 @@ class Town:
     def __init__(self, key: str, mods_dir: str | None):
         self.cfg = TOWNS[key]
         self.name = self.cfg["name"]
-        self.data = os.path.join(ROOT, "data", key, "overture")
+        # The lot files' origin has to fall on a chunk (8 tiles), and a world
+        # cell is 300 tiles, so only an even cell number does.
+        if self.cfg["origin"][0] % 2 or self.cfg["origin"][1] % 2:
+            raise SystemExit(f"{key}: origin {self.cfg['origin']} must be even cell numbers")
+        self.data = os.path.join(ROOT, "data", self.cfg.get("data", key), "overture")
         self.work = os.path.join(ROOT, "work", "towns")
         self.project = os.path.join(self.work, self.name)
         self.mods = mods_dir or os.path.join(ROOT, "work", "mod")
@@ -97,6 +125,9 @@ def stage_fetch(t: Town, a) -> None:
 def stage_render(t: Town, a) -> None:
     from generator import osm, renderer
     outline = town.outline(t.data, t.cfg["outline"])
+    if t.cfg.get("clip"):
+        cs, cw, cn, ce = t.cfg["clip"]
+        outline = outline.intersection(box(cw, cs, ce, cn))
     west, south, east, north = outline.bounds
     fs, fw, fn, fe = t.cfg["fetch"]
     feats = town.features(t.data, box(fw, fs, fe, fn))

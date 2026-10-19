@@ -8,6 +8,7 @@ Build 42 maps of real places at one tile to the metre, made with
 |---|---|---|
 | [Isle Royale](#isle-royale) | Isle Royale National Park, Michigan: 570 km² of island wilderness in Lake Superior | `release/IsleRoyale.7z.001`–`.005` (425 MB, 11 GB unpacked) |
 | [Evanston](#evanston) | Evanston, Illinois: the whole city inside its real boundary, on Lake Michigan | `release/Evanston.7z` (41 MB, 690 MB unpacked) |
+| [Evanston: Central Street test](#true-to-life-test-central-street) | North Evanston built with real building outlines, street lines and heights | `release/EvanstonCentral.7z` (7 MB) |
 
 The two sit side by side in the game world, so both mods can be installed at
 once. See [Installing](#installing) for how to put one in the game.
@@ -254,6 +255,36 @@ Overture data for Evanston is checked in under `data/evanston`. Another town
 can be added to `TOWNS` in `pipeline/build_town.py` with its name in
 Overture's divisions, a box to fetch, KnoxMap settings and a free spot in the
 world.
+
+## True-to-life test: Central Street
+
+`release/EvanstonCentral.7z` (7 MB) is north Evanston around Central Street
+built as close to the real buildings as KnoxMap can get, as a trial before
+rebuilding the whole city that way:
+
+- **Real outlines and angles** (`building_alignment = "real"`). The full
+  Evanston build squares most buildings onto the grid; here every outline
+  keeps its mapped shape, notches and angle.
+- **Real street lines** (`straight_roads = 0`). Streets stay where they are,
+  instead of being laid out in straight runs and 45° corners, so the
+  buildings beside them don't move.
+- **Real heights, uncapped** (`max_levels = 30`).
+
+It covers Central Street from the Metra station to Sheridan Road, with the
+CTA Central station, Evanston Hospital, Ryan Field and the streets of houses
+around them: 3,641 buildings in 72 cells. It sits beside Evanston in the game
+world, so both can be installed together.
+
+The pictures show the same ground from both builds, with each building drawn
+as the floor plan knoxbuild actually built. On the left is the current full
+Evanston build; on the right is the test.
+
+![Central Street: current build and the test](docs/compare_central_street.png)
+
+![Evanston Hospital: current build and the test](docs/compare_evanston_hospital.png)
+
+`pipeline/compare.py` draws these pictures for any two builds and any
+latitude/longitude box.
 
 # Installing
 
