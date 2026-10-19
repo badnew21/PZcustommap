@@ -272,7 +272,21 @@ def stage_papermap(a) -> None:
     import papermap
     fr = window.frame()
     papermap.write(PROJECT, fr, window.data(), WORLD_ORIGIN)
-    papermap.write_spawnpoints(PROJECT, fr, window.data(), WORLD_ORIGIN)
+    # Where a player can start: each place its own spawn region (regions.py),
+    # and the island's own spawnpoints.lua all of them, for a random start.
+    import regions
+    record = json.load(open(os.path.join(WORK, "windows.json")))
+
+    def bmp(suffix):
+        return open_bmp(path(suffix))
+    places = regions.compute(fr, window.data(), record, os.path.join(WORK, "windows"), bmp)
+    regions.save(os.path.join(WORK, "regions.json"), places)
+    with open(os.path.join(PROJECT, "spawnpoints.lua"), "w", encoding="utf-8") as f:
+        f.write(regions.spawnpoints_lua([p for pts in places.values() for p in pts], WORLD_ORIGIN))
+    say(f"spawn regions: {len(places)} places, "
+        f"{sum(len(v) for v in places.values())} spawn points")
+    for place, pts in places.items():
+        say(f"  {place}: {len(pts)}")
     papermap.write_info(PROJECT, NAME, fr)
     # knoxbuild sets one rifle aside in every window; the map keeps the one in
     # the biggest settlement. The first one found was the Rock of Ages
@@ -301,6 +315,14 @@ def stage_mod(a) -> None:
     mods = a.mods_dir or os.path.join(WORK, "mod")
     root, n, extras = lots.package(PROJECT, TITLE, MOD_ID, mods, papermap.DESCRIPTION)
     papermap.write_mod_extras(root)
+    import regions
+    maps_dir = os.path.join(root, "common", "media", "maps")
+    folders = regions.write_folders(maps_dir, regions.load(os.path.join(WORK, "regions.json")),
+                                    WORLD_ORIGIN, "The rest of the island is the same map.")
+    for f in os.listdir(os.path.join(root, "server")):
+        if f.endswith("_spawnregions.lua"):
+            regions.write_server_regions(os.path.join(root, "server", f), folders)
+    say(f"mod: {len(folders)} spawn regions beside the map")
     say(f"mod: {root}, {n} cells")
     for e in extras:
         say(f"  {e}")

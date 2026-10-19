@@ -50,8 +50,25 @@ island one piece at a time and stitches the pieces back together.
   population estimate), a few along the trails and at the campgrounds, and
   almost none in the deep woods.
 
-New characters start at the Rock Harbor and Windigo ferry landings or at one of
-the campgrounds.
+### Where you start
+
+On the new-game screen you can choose where to start. Each place is its own
+spawn region:
+
+- **Rock Harbor** and **Windigo**, the ferry landings, starting inside one of
+  their buildings.
+- **20 campgrounds** along the trails, from Washington Creek and Huginnin Cove
+  in the west to Daisy Farm, Moskey Basin and Lane Cove in the east, starting
+  in the clearing.
+- **Isle Royale** itself, for a random start at any of them.
+
+Every start point is checked against the map as built: on a floor tile inside
+a building that knoxbuild actually made, or on open grass with no tree,
+building or water on it. All of them are on the main island, so nobody starts
+somewhere they can't leave. Each region is a small map folder beside the
+island's own (`Isle Royale - Daisy Farm Campground` and so on), the way
+vanilla does Riverside and Rosewood: it borrows the island's lot files and has
+its own spawn points (`pipeline/regions.py`).
 
 ### Things to know
 
@@ -120,9 +137,9 @@ change, use `--stages`:
 | `terrain` | Draws the island in 2.4 km strips with KnoxMap's renderer and stitches them into one ground and one vegetation bitmap. |
 | `buildings` | Draws each cluster of buildings again as its own KnoxMap map, runs knoxbuild on it, and pastes the result back. |
 | `spawn` | Makes the zombie spawn map. |
-| `papermap` | Writes the in-game map, its labels and the spawn points. |
+| `papermap` | Writes the in-game map and its labels, and picks the start points for each spawn region. |
 | `compile` | Compiles the lot files with knoxlots, a few rows of cells at a time. |
-| `mod` | Packages the mod with KnoxMap's own `make_map_mod`. |
+| `mod` | Packages the mod with KnoxMap's own `make_map_mod`, and adds a spawn-region folder for each place. |
 
 `--workers N` sets how many processes compile at once. `--render-workers N`
 sets how many strips are drawn at once; each takes about 2.5 GB.
@@ -253,6 +270,12 @@ size limit.
    Linux and macOS.
 4. Start Project Zomboid (Build 42), enable the map under Mods, and start a
    **new** game on it.
+
+If you downloaded Isle Royale before the start locations were added, you
+don't need the whole archive again. Extract
+`release/IsleRoyale-spawn-regions-update.zip` (17 KB) into your mods folder
+over the existing `IsleRoyale` folder and let it replace files. Then start a
+new game.
 
 Read `HOW TO PLAY.txt` in the mod folder first. Maps this size need more
 memory than the game gives itself by default, and the file says how to raise

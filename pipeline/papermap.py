@@ -40,11 +40,6 @@ STYLE = {
     "building": ("text-building", 0.5),
 }
 SETTLEMENTS = {"Rock Harbor": (48.1458, -88.4848), "Windigo": (47.9124, -89.1560)}
-# Where a new character starts: the two ferry landings, and the campgrounds
-# a day's walk apart along the trails.
-SPAWN_BUILDINGS = ("Rock Harbor Trading Post", "Windigo Store", "Lodge Royale",
-                   "Rock Harbor Visitor Center", "Ranger Station and Visitor Center")
-MAX_SPAWNS = 12
 
 
 def _name(r):
@@ -176,31 +171,6 @@ def _labels(fr, data) -> list[tuple[str, str, float, float, float]]:
     out.append(("Map data (c) OpenStreetMap contributors, Overture Maps, ESA WorldCover",
                 "text-note", 0.35, min(fr.width - 1, 600), min(fr.height - 1, 40)))
     return out
-
-
-def write_spawnpoints(project: str, fr, data, origin) -> int:
-    """Start at the ferry landings and the campgrounds, in absolute world tiles."""
-    ox, oy = origin[0] * CELL, origin[1] * CELL
-    pts = []
-    for r in data.rows.get("building", []):
-        if _name(r) in SPAWN_BUILDINGS:
-            p = fr.utm_to_px(data.utm(wkb.loads(r["geometry"])).representative_point())
-            pts.append((int(p.x), int(p.y)))
-    for r in data.rows.get("land_use", []):
-        if r["class"] == "camp_site" and len(pts) < MAX_SPAWNS:
-            g = data.utm(wkb.loads(r["geometry"]))
-            if data.land.contains(g.representative_point()):
-                p = fr.utm_to_px(g.representative_point())
-                pts.append((int(p.x), int(p.y)))
-    if not pts:
-        c = fr.utm_to_px(data.land.representative_point())
-        pts = [(int(c.x), int(c.y))]
-    body = ",\n".join(f"      {{ posX = {x + ox}, posY = {y + oy}, posZ = 0 }}" for x, y in pts)
-    with open(os.path.join(project, "spawnpoints.lua"), "w", encoding="utf-8") as f:
-        f.write("function SpawnPoints()\n  return {\n    unemployed = {\n"
-                + body + "\n    }\n  }\nend\n")
-    print(f"spawn points: {len(pts)}")
-    return len(pts)
 
 
 def write_info(project: str, name: str, fr) -> None:
