@@ -65,6 +65,10 @@ MARGIN = 1                # cells of margin round it
 # files' origin falls on a chunk.
 WORLD_ORIGIN = (400, 0)
 SHORE_CELLS = 1
+# Only the coast (region.coast_utm): Lake Michigan's shore 3 km in, and White
+# Lake, Muskegon Lake and Bear Lake with their shores. The farms and woods
+# inland are built but not compiled into the mod.
+COAST_ONLY = True
 
 # KnoxMap settings. Real outlines at their real angles, the streets where they
 # are, real heights; a small American town's mix of houses, flats and parking.
@@ -138,6 +142,36 @@ def cores(fr) -> list[dict]:
             w1y = min(fr.height, c1y + MARGIN * CELL)
             out.append({"name": f"w{ix // CORE:02d}_{iy // CORE:02d}",
                         "core": [c0x, c0y, c1x, c1y], "win": [w0x, w0y, w1x, w1y]})
+    return out
+
+
+def land_cells(fr) -> set[tuple[int, int]]:
+    """Build 42 cells holding any land, inland lakes counted as land."""
+    return _cells_touching(fr, fr.utm_to_px(data().land))
+
+
+def coast_cells(fr) -> set[tuple[int, int]]:
+    """Build 42 cells that hold any of the coast (region.coast_utm): the
+    cells the map is cut down to with COAST_ONLY."""
+    return _cells_touching(fr, fr.utm_to_px(region.coast_utm(data())))
+
+
+def _cells_touching(fr, shape) -> set[tuple[int, int]]:
+    """Build 42 cells (world numbering, as lots.keep_cells) touching a shape
+    in frame tiles."""
+    from shapely import STRtree
+    from shapely.geometry import box
+    import lots
+    parts = list(getattr(shape, "geoms", None) or [shape])
+    tree = STRtree(parts)
+    ox = WORLD_ORIGIN[0] * CELL
+    out = set()
+    side = lots.SIDE
+    for cy in range(0, -(-fr.height // side)):
+        for cx in range(ox // side, (ox + fr.width - 1) // side + 1):
+            b = box(cx * side - ox, cy * side, (cx + 1) * side - ox, (cy + 1) * side)
+            if any(parts[i].intersects(b) for i in tree.query(b)):
+                out.add((cx, cy))
     return out
 
 
@@ -349,6 +383,18 @@ def stage_paste(a) -> None:
     sc = 10
     spawn = np.zeros((fr.height // sc, fr.width // sc), np.uint8)
     placements, zones, owned_fp = [], [], []
+    import lots as _lots
+    side = _lots.SIDE
+    wx = WORLD_ORIGIN[0] * CELL
+    coast = coast_cells(fr) if COAST_ONLY else None
+
+    def on_map(x, y, w=1, h=1):
+        """Whether a rectangle of frame tiles reaches a cell the map keeps."""
+        if coast is None:
+            return True
+        return any((cx, cy) in coast
+                   for cx in range((x + wx) // side, (x + w - 1 + wx) // side + 1)
+                   for cy in range(y // side, (y + h - 1) // side + 1))
     kept_boxes: list[tuple] = []
     dropped = 0
     for r in records:
@@ -375,6 +421,8 @@ def stage_paste(a) -> None:
             sp[(c0y - y0) // sc:(c1y - y0) // sc, (c0x - x0) // sc:(c1x - x0) // sc]
         for lot in r["lots"]:
             rect = (lot["x"], lot["y"], lot["w"], lot["h"])
+            if not on_map(*rect):
+                continue
             if lot["building"]:
                 # Built by two windows and kept by both, off by a tile: keep one.
                 hits = [b for b in kept_boxes if _overlap(b, rect) > 0.5]
@@ -390,13 +438,14 @@ def stage_paste(a) -> None:
                 shutil.copy2(src, os.path.join(bdir, fname))
             placements.append(Placement(f"buildings/{fname}", lot["x"], lot["y"], lot["w"],
                                         lot["h"], on_top=lot["on_top"], levels=lot["levels"]))
-        zones += [Zone(z["kind"], z["x"], z["y"], z["w"], z["h"]) for z in r["zones"]]
+        zones += [Zone(z["kind"], z["x"], z["y"], z["w"], z["h"]) for z in r["zones"]
+                  if on_map(z["x"], z["y"], z["w"], z["h"])]
         fp = os.path.join(wdir, f"{name}_footprints.npz")
         if os.path.exists(fp):
             for fx, fy, mask, levels, kind in load_footprints(fp):
                 h, w = mask.shape
                 cx, cy = fx + x0 + w // 2, fy + y0 + h // 2
-                if c0x <= cx < c1x and c0y <= cy < c1y:
+                if c0x <= cx < c1x and c0y <= cy < c1y and on_map(cx, cy):
                     owned_fp.append((fx + x0, fy + y0, mask, levels, kind))
         say(f"paste: {name}")
     lm.flush()
@@ -418,7 +467,8 @@ def stage_papermap(a) -> None:
     import whitehall_map
     from knoxbuild.population import load_footprints
     fr = frame()
-    whitehall_map.write(PROJECT, fr, data(), WORLD_ORIGIN)
+    whitehall_map.write(PROJECT, fr, data(), WORLD_ORIGIN,
+                        clip=region.coast_utm(data()) if COAST_ONLY else None)
     places = whitehall_map.spawn_places(fr, load_footprints(path("_footprints.npz")))
     regions.save(os.path.join(WORK, "regions.json"), places)
     with open(os.path.join(PROJECT, "spawnpoints.lua"), "w", encoding="utf-8") as f:
@@ -428,13 +478,16 @@ def stage_papermap(a) -> None:
     papermap.write_info(PROJECT, NAME, fr)
     # The guaranteed rifle: knoxbuild sets one aside in every window; the map
     # keeps one, in the window nearest downtown Muskegon whose rifle is in a
-    # building that window kept. Its position is in world tiles already.
+    # building that window kept and the map has. Its position is in world
+    # tiles already.
     import region as _r
     mx, my = _r.point_px(fr, 43.2330, -86.2500)
+    with open(path(".pzw"), encoding="utf-8") as fh:
+        on_map = set(re.findall(r"buildings/([^\"/]+\.tbx)", fh.read()))
     for r in sorted(_records(), key=lambda r: ((r["core"][0] + r["core"][2]) / 2 - mx) ** 2
                     + ((r["core"][1] + r["core"][3]) / 2 - my) ** 2):
         g = os.path.join(window_dir(r["name"]), f"{r['name']}_guncache.json")
-        kept = {os.path.basename(l["tbx"]) for l in r["lots"] if l["building"]}
+        kept = {os.path.basename(l["tbx"]) for l in r["lots"] if l["building"]} & on_map
         if os.path.exists(g) and json.load(open(g)).get("building") in kept:
             shutil.copy2(g, path("_guncache.json"))
             say(f"  rifle: {r['name']}")
@@ -448,9 +501,26 @@ def stage_compile(a) -> None:
     rules.TREE_SPECIES = FOREST_SPECIES
     ox = WORLD_ORIGIN[0] * CELL
     rules_file = rules.make_rules(map_source.rules_path(), os.path.join(WORK, "rules"))
-    keep = lots.keep_cells(path(".bmp"), ox, SHORE_CELLS)
+    # Every cell with land on it and one of open lake round that - and the
+    # inland lakes whole: the middle of White Lake or Muskegon Lake is all
+    # water, and left out it would be a hole in the lake.
+    keep = lots.keep_cells(path(".bmp"), ox, SHORE_CELLS) | land_cells(frame())
+    if COAST_ONLY:
+        keep &= coast_cells(frame())
+    done_file = os.path.join(WORK, "compile_done.json")
+    if os.path.exists(done_file):
+        # Rows done before cells were added to them are done again.
+        have = {tuple(int(v) for v in re.findall(r"\d+", f)[:2])
+                for f in os.listdir(os.path.join(PROJECT, "lots")) if f.endswith(".lotheader")}
+        stale = {cy for cx, cy in keep - have}
+        json.dump(sorted(set(json.load(open(done_file))) - stale), open(done_file, "w"))
+        # ...and cells outside the map now are removed.
+        for f in os.listdir(os.path.join(PROJECT, "lots")):
+            nums = re.findall(r"\d+", f)
+            if len(nums) >= 2 and (int(nums[0]), int(nums[1])) not in keep:
+                os.remove(os.path.join(PROJECT, "lots", f))
     lots.compile_project(PROJECT, ox, keep, a.workers, WORK,
-                         os.path.join(WORK, "compile_done.json"), rules_file, say)
+                         done_file, rules_file, say)
 
 
 def stage_mod(a) -> None:

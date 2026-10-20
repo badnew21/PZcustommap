@@ -52,12 +52,16 @@ PLACES = {"Whitehall": (43.4090, -86.3420, 900), "Montague": (43.4170, -86.3580,
 SPAWNS_PER_PLACE = 6
 
 
-def write(project: str, fr, data, origin) -> None:
+def write(project: str, fr, data, origin, clip=None) -> None:
+    """The paper map; `clip` (UTM) cuts it to the part of the frame kept."""
     kworld.set_origin(origin)
     W, H = fr.width, fr.height
     features = []
     land_px = fr.utm_to_px(data.land).buffer(0)
     lake = box(0, 0, W, H).difference(land_px)
+    area = fr.utm_to_px(clip).buffer(0) if clip is not None else None
+    if area is not None:
+        lake = lake.intersection(area.buffer(512))
     pieces: list = []
     papermap._split(lake, 0, 0, W, H, pieces)
     features += [(p, "water", "river") for p in pieces]
@@ -95,6 +99,22 @@ def write(project: str, fr, data, origin) -> None:
         for part in getattr(wpoly, "geoms", None) or [wpoly]:
             features.append((part, "water", "river"))
 
+    if area is not None:
+        from shapely import prepared
+        inside = prepared.prep(area)
+        kept = []
+        for p, k, v in features:
+            if inside.contains(p):
+                kept.append((p, k, v))
+            elif inside.intersects(p):
+                cut = p.intersection(area)
+                for part in getattr(cut, "geoms", None) or [cut]:
+                    if part.geom_type == "Polygon" and part.area >= 1:
+                        kept.append((part, k, v))
+        features = kept
+        streets = {n: [(l, w) for l, w in ls if inside.intersects(l)]
+                   for n, ls in streets.items()}
+        streets = {n: ls for n, ls in streets.items() if ls}
     order = {"natural": 0, "water": 1, "railway": 2, "highway": 3, "building": 4}
     features.sort(key=lambda f: order.get(f[1], 9))
     cleaned = [(kmap._clean(p), k, v) for p, k, v in features]
@@ -102,6 +122,9 @@ def write(project: str, fr, data, origin) -> None:
                                  [(p, k, v) for p, k, v in cleaned if p is not None], W, H)
     named = kmap._write_streets(os.path.join(project, "streets.xml"), streets)
     labels = _labels(fr, data)
+    if area is not None:
+        from shapely.geometry import Point
+        labels = [l for l in labels if l[1] == "text-note" or area.contains(Point(l[3], l[4]))]
     kmap._write_annotations(os.path.join(project, "worldmap-annotations.lua"), labels, W, H)
     print(f"paper map: {len(features)} features over {cells} cells, {named} named streets, "
           f"{len(labels)} labels")

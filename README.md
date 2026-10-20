@@ -74,6 +74,10 @@ its own spawn points (`pipeline/regions.py`).
 
 ### Things to know
 
+- **The map stops 3 km inland.** Past the coast (and past 1.5 km from White
+  Lake and Muskegon Lake) there is nothing: the edge of the map. The cut
+  follows whole cells, so it is a stepped line, and it crosses Whitehall's
+  east side and Muskegon's south-east neighbourhoods.
 - **North is turned 30°.** The island runs southwest to northeast, so the map
   is rotated until that long axis runs left to right. A north-up frame would
   have been 65 × 40 km, mostly water.
@@ -225,6 +229,10 @@ instead of a live OpenStreetMap download.
 
 ### Things to know
 
+- **The map stops 3 km inland.** Past the coast (and past 1.5 km from White
+  Lake and Muskegon Lake) there is nothing: the edge of the map. The cut
+  follows whole cells, so it is a stepped line, and it crosses Whitehall's
+  east side and Muskegon's south-east neighbourhoods.
 - **The map stops at the city line.** Outside Evanston's boundary, KnoxMap
   turns the neighbouring towns (Skokie, Wilmette, Chicago's Rogers Park) back
   into open ground. The main roads carry on across it.
@@ -331,8 +339,12 @@ latitude/longitude box.
 The Lake Michigan shore of Muskegon County, Michigan, at one tile to the
 metre. It runs from Montague, Whitehall and the White River in the north,
 down 27 km of shore past White Lake, Duck Lake and Muskegon State Park, to
-North Muskegon, Muskegon Lake and the city of Muskegon. East to west it
-reaches from the beach to US-31. The map is about 450 km² of land.
+North Muskegon, Muskegon Lake and the city of Muskegon.
+
+It is the coast only: the land within 3 km of Lake Michigan, and White Lake,
+Muskegon Lake and Bear Lake with 1.5 km of shore round the first two and 1 km
+round Bear Lake. That takes in Whitehall, Montague and downtown Muskegon,
+and leaves out the farms and woods inland.
 
 ![The whole map](docs/whitehall_overview.png)
 
@@ -351,10 +363,10 @@ reaches from the beach to US-31. The map is about 450 km² of land.
   Muskegon Lake channel and Pere Marquette beach.
 - **North Muskegon and Muskegon**: downtown on its diagonal grid, Western
   Avenue, Hackley Park, the waterfront and the neighbourhoods round them.
-- **Every street and building in Overture Maps**: 37,538 footprints, built as
-  40,662 furnished buildings once rows of shops and terraces are split into
-  their units. Heights are real for about 80% of them, and outlines keep
-  their real shape and angle.
+- **Every street and building in Overture Maps** along the coast: 26,688
+  furnished buildings, with rows of shops and terraces split into their
+  units. Heights are real for about 80% of them, and outlines keep their
+  real shape and angle.
 - **Woods, farmland, wetland and dunes** from ESA WorldCover, with lakes,
   ponds, rivers and streams from OpenStreetMap.
 - **An in-game map (M)** with the towns, lakes, parks and named streets.
@@ -406,13 +418,16 @@ folder stops world generation from replacing them.
 ### Where you start
 
 On the new-game screen you can choose **Whitehall**, **Montague**, the
-**White Lake Channel**, **Lakewood Club**, **North Muskegon**, **Muskegon** or
-**Lakeside**, each a spawn region of its own with start points inside homes
+**White Lake Channel**, **North Muskegon**, **Muskegon** or **Lakeside**, each a spawn region of its own with start points inside homes
 built there. **White Lake to Muskegon** itself is a random start at any of
 them.
 
 ### Things to know
 
+- **The map stops 3 km inland.** Past the coast (and past 1.5 km from White
+  Lake and Muskegon Lake) there is nothing: the edge of the map. The cut
+  follows whole cells, so it is a stepped line, and it crosses Whitehall's
+  east side and Muskegon's south-east neighbourhoods.
 - **North is up.** The frame is turned only by the half degree between UTM
   grid north and true north, so Muskegon's streets run along the tiles.
 - **Most footprints are machine-detected.** About 86% of the outlines are
@@ -438,10 +453,15 @@ The data for the region is checked in under `data/whitehall`. The stages are:
 | Stage | What it does |
 |---|---|
 | `windows` | Cuts the map into cores of 10 × 10 cells (3 km a side). Each core is rendered and built as its own KnoxMap map, with a 300 m margin round it so buildings, yards and fences near the edge are laid out with their neighbours. |
-| `paste` | Stitches the cores into one ground, vegetation and zombie bitmap and one WorldEd project. It keeps each building whose lot is centred in its core, whole, plus the props, fences and zones of the core's own cells. |
+| `paste` | Stitches the cores into one ground, vegetation and zombie bitmap and one WorldEd project. It keeps each building whose lot is centred in its core, whole, plus the props, fences and zones of the core's own cells, and drops whatever is off the coast. |
 | `papermap` | Writes the in-game map, the map's info and the start points. |
 | `compile` | Compiles the lot files with knoxlots, a few rows of cells at a time. |
 | `mod` | Packages the mod and adds a spawn-region folder for each town. |
+
+The whole frame is rendered and built either way. `COAST_ONLY` in
+`pipeline/build_whitehall.py` decides what goes into the mod: the coast
+(`region.coast_utm`, with its reach set at the bottom of `pipeline/region.py`)
+or all of it, about 6,500 cells and 6.5 GB.
 
 `--build-workers N` sets how many windows are built at once; each takes 1–2
 GB. `--only w05_06,w06_06` rebuilds just those windows. Delete a window's
@@ -452,11 +472,11 @@ GB. `--only w05_06,w06_06` rebuilds just those windows. Delete a window's
 | | |
 |---|---|
 | Frame | 21,300 × 26,700 tiles (71 × 89 KnoxMap cells) |
-| Land | about 450 km² |
-| Buildings | 40,662 |
-| Build 42 cells compiled | 6,479 |
-| Mod on disk | 6.5 GB |
-| Build time | windows 24 min, paste 7 min, compile 37 min (4 cores) |
+| On the map | the coast, about 170 km² of land and lake |
+| Buildings | 26,688 |
+| Build 42 cells compiled | 2,867 |
+| Mod on disk | 2.8 GB |
+| Build time | windows 24 min, paste 3 min, compile about 16 min (4 cores) |
 
 Project Zomboid needs extra memory for a map this size. KnoxMap writes a
 `HOW TO PLAY.txt` into the mod that says how to give the game more.

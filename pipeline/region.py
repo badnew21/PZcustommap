@@ -317,3 +317,25 @@ def point_px(fr, lat, lon):
 def dump(path: str, obj) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=1)
+
+
+# The coast: what is kept when the map is cut down to the shore. Lake
+# Michigan's beaches, dunes and shore roads, and round the drowned river
+# mouths that open on to it - White Lake and Muskegon Lake, with Bear Lake
+# off Muskegon Lake - their shores and the towns on them.
+LAKE_MICHIGAN_REACH_M = 3000
+COASTAL_LAKES = {"White Lake": 1500, "Muskegon Lake": 1500, "Bear Lake": 1000}
+
+
+def coast_utm(data):
+    """The coast, as a UTM polygon: the shore and the water off it. How much of
+    Lake Michigan is kept is up to the compile, which keeps one cell of open
+    lake round the land."""
+    lake = data.extent.difference(data.land)
+    parts = [lake.buffer(LAKE_MICHIGAN_REACH_M)]
+    for g, tags in data.items:
+        reach = COASTAL_LAKES.get(tags.get("name"))
+        if reach and tags.get("natural") == "water" \
+                and g.geom_type in ("Polygon", "MultiPolygon"):
+            parts.append(g.buffer(reach))   # the lake itself and its shores
+    return unary_union(parts).intersection(data.extent)
