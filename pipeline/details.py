@@ -393,12 +393,13 @@ def install() -> None:
     from generator.rendering import furniture
     import knoxbuild.props as kprops
 
-    for name, factor in WEAR.items():
-        setattr(furniture, name, getattr(furniture, name) * factor)
-
     original = kprops.place_props
     if getattr(original, "_with_details", False):
         return
+    # Once per process: a worker that builds several maps must not turn the
+    # wear up again for each.
+    for name, factor in WEAR.items():
+        setattr(furniture, name, getattr(furniture, name) * factor)
 
     def place_props(out_dir, map_name, bdir, occupied, areas, metres_per_tile, seed=0x6FADE):
         placements, counts = original(out_dir, map_name, bdir, occupied, areas,

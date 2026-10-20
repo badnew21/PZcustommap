@@ -9,8 +9,9 @@ Build 42 maps of real places at one tile to the metre, made with
 | [Isle Royale](#isle-royale) | Isle Royale National Park, Michigan: 570 km² of island wilderness in Lake Superior | `release/IsleRoyale.7z.001`–`.005` (425 MB, 11 GB unpacked) |
 | [Evanston](#evanston) | Evanston, Illinois: the whole city inside its real boundary, on Lake Michigan | `release/Evanston.7z` (41 MB, 690 MB unpacked) |
 | [Evanston: Central Street test](#true-to-life-test-central-street) | North Evanston from Bent Park to Sheridan Road and down Ridgeway Avenue, built with real building outlines, street lines and heights | `release/EvanstonCentral.7z` (10 MB) |
+| [White Lake to Muskegon](#white-lake-to-muskegon) | The Lake Michigan shore from Montague and Whitehall to Muskegon: White Lake and its channel, the beach houses, the dunes and the city of Muskegon | `release/WhiteLakeMuskegon.7z.001`–`.NNN` (ARCHIVE_MB, 6.5 GB unpacked) |
 
-The two sit side by side in the game world, so both mods can be installed at
+They sit side by side in the game world, so all of them can be installed at
 once. See [Installing](#installing) for how to put one in the game.
 
 # Isle Royale
@@ -325,17 +326,153 @@ Evanston build; on the right is the test.
 `pipeline/compare.py` draws these pictures for any two builds and any
 latitude/longitude box.
 
+# White Lake to Muskegon
+
+The Lake Michigan shore of Muskegon County, Michigan, at one tile to the
+metre. It runs from Montague, Whitehall and the White River in the north,
+down 27 km of shore past White Lake, Duck Lake and Muskegon State Park, to
+North Muskegon, Muskegon Lake and the city of Muskegon. East to west it
+reaches from the beach to US-31. The map is about 450 km² of land.
+
+![The whole map](docs/whitehall_overview.png)
+
+## What is on the map
+
+- **White Lake and its channel**, with the piers out into Lake Michigan, the
+  beach and dune paths on both sides, the docks along the shore, and the
+  cottages and beach houses on the roads round the lake.
+- **The White River Light Station**, the 1875 lighthouse on the south side of
+  the channel. The brick keeper's house is a building you can walk into (it
+  is a museum now), and its four-storey tower stands at the lake end.
+- **Whitehall and Montague**: Colby Street and Dowling Street, the Playhouse,
+  the armory, the schools and the streets of houses on both sides of the
+  river mouth.
+- **The shore down to Muskegon**: Duck Lake, Muskegon State Park's dunes, the
+  Muskegon Lake channel and Pere Marquette beach.
+- **North Muskegon and Muskegon**: downtown on its diagonal grid, Western
+  Avenue, Hackley Park, the waterfront and the neighbourhoods round them.
+- **Every street and building in Overture Maps**: 37,538 footprints, built as
+  40,662 furnished buildings once rows of shops and terraces are split into
+  their units. Heights are real for about 80% of them, and outlines keep
+  their real shape and angle.
+- **Woods, farmland, wetland and dunes** from ESA WorldCover, with lakes,
+  ponds, rivers and streams from OpenStreetMap.
+- **An in-game map (M)** with the towns, lakes, parks and named streets.
+- **Zombies by population**, from KnoxMap's estimate of who lived and worked
+  in each building.
+
+![The White Lake channel at one pixel to two tiles](docs/whitehall_inlet.png)
+
+![Downtown Muskegon](docs/whitehall_muskegon.png)
+
+### Buildings along the shore
+
+KnoxMap picks each house's walls from how built-up its street is. That would
+put brick and stucco on the lake cottages, so the walls are set where the
+building stock is known (`pipeline/styles.py`):
+
+- **Within 250 m of Lake Michigan, and 130 m of White Lake, Duck Lake, Bear
+  Lake and Muskegon Lake**, every house is timber-framed and sided:
+  clapboard, painted boards, and grey, blue, yellow or green siding, with the
+  odd log cabin and almost no brick.
+- **The old downtowns** of Whitehall (Colby Street), Montague (Dowling Street)
+  and Muskegon (Western Avenue) are mostly brick commercial blocks.
+- **Named landmarks** get their own walls: the light station in brick, the
+  Life-Saving Station and the Playhouse in clapboard.
+
+Each building gets its walls from where it stands, so a building on the
+line between two parts of the build comes out the same from both.
+
+### Trees
+
+- **Forest** is maple-heavy hardwood: red maple, American basswood (linden)
+  and birch, drawn from Build 42's per-species sheets.
+- **Hemlock and pine through the woods** (`pipeline/conifers.py`): Build 42's
+  Jumbo Canadian hemlock and Virginia pine, at Jumbo, XL and XXL size, about
+  one in every 200–300 m² of woodland and more within 2 km of Lake
+  Michigan. They stand over the hardwoods the way white pine and hemlock do
+  on this shore. The broadleaf trees right round each one are cleared, so
+  trunks don't overlap.
+- **Pines on the dunes**: a thin scatter of smaller Virginia pines on the
+  open sand and scrub near the lake.
+- **Street and yard trees** (`pipeline/details.py`): a tree in the verge every
+  11 m on residential streets, and most single garden and park trees swapped
+  for Jumbo maples, basswoods, birches, hemlocks and pines.
+
+Every Jumbo tree is placed as its sheet's main `_0` tile, which is how the map
+tools' Build 42 notes say to place one. A `WorldGenOverride.lua` in the map
+folder stops world generation from replacing them.
+
+### Where you start
+
+On the new-game screen you can choose **Whitehall**, **Montague**, the
+**White Lake Channel**, **Lakewood Club**, **North Muskegon**, **Muskegon** or
+**Lakeside**, each a spawn region of its own with start points inside homes
+built there. **White Lake to Muskegon** itself is a random start at any of
+them.
+
+### Things to know
+
+- **North is up.** The frame is turned only by the half degree between UTM
+  grid north and true north, so Muskegon's streets run along the tiles.
+- **Most footprints are machine-detected.** About 86% of the outlines are
+  Microsoft's building footprints from aerial imagery, via Overture Maps.
+  They have real heights but no names or uses, so most are built as houses.
+- **The woods come from satellite land cover.** ESA WorldCover maps much of
+  the land between the towns as forest, including some farmland and the
+  wooded lots the houses stand in. KnoxMap clears a yard round each building.
+- **Interiors are generic.** Rooms suit what a building is, not its real
+  floor plan.
+- **There is no elevation.** Build 42 maps are flat, so the dunes are sand
+  and scrub at ground level.
+
+## Building it
+
+```sh
+export KNOXMAP_DIR=~/KnoxMap
+$KNOXMAP_DIR/.venv/bin/python pipeline/build_whitehall.py --mods-dir ~/Zomboid/mods
+```
+
+The data for the region is checked in under `data/whitehall`. The stages are:
+
+| Stage | What it does |
+|---|---|
+| `windows` | Cuts the map into cores of 10 × 10 cells (3 km a side). Each core is rendered and built as its own KnoxMap map, with a 300 m margin round it so buildings, yards and fences near the edge are laid out with their neighbours. |
+| `paste` | Stitches the cores into one ground, vegetation and zombie bitmap and one WorldEd project. It keeps each building whose lot is centred in its core, whole, plus the props, fences and zones of the core's own cells. |
+| `papermap` | Writes the in-game map, the map's info and the start points. |
+| `compile` | Compiles the lot files with knoxlots, a few rows of cells at a time. |
+| `mod` | Packages the mod and adds a spawn-region folder for each town. |
+
+`--build-workers N` sets how many windows are built at once; each takes 1–2
+GB. `--only w05_06,w06_06` rebuilds just those windows. Delete a window's
+`kept.json` to build it again.
+
+## Size
+
+| | |
+|---|---|
+| Frame | 21,300 × 26,700 tiles (71 × 89 KnoxMap cells) |
+| Land | about 450 km² |
+| Buildings | 40,662 |
+| Build 42 cells compiled | 6,479 |
+| Mod on disk | 6.5 GB |
+| Build time | windows 24 min, paste 7 min, compile 37 min (4 cores) |
+
+Project Zomboid needs extra memory for a map this size. KnoxMap writes a
+`HOW TO PLAY.txt` into the mod that says how to give the game more.
+
 # Installing
 
-Both maps are in [`release/`](release) as 7-Zip archives. Isle Royale is split
-into five parts (`IsleRoyale.7z.001` to `.005`) to stay under GitHub's file
-size limit.
+The maps are in [`release/`](release) as 7-Zip archives. Isle Royale and
+White Lake to Muskegon are split into parts (`IsleRoyale.7z.001`,
+`.002`, ...) to stay under GitHub's file size limit.
 
-1. Download the archive. For Isle Royale, download every part into one folder.
-2. Open it with [7-Zip](https://www.7-zip.org): `Evanston.7z`, or
-   `IsleRoyale.7z.001`, which reads the other parts by itself. On Linux, use
-   `7z x <file>`.
-3. Extract the folder inside (`Evanston` or `IsleRoyale`) into your Zomboid
+1. Download the archive. For a split one, download every part into one folder.
+2. Open it with [7-Zip](https://www.7-zip.org): `Evanston.7z`, or the
+   `.001` part of a split one, which reads the other parts by itself. On
+   Linux, use `7z x <file>`.
+3. Extract the folder inside (`Evanston`, `IsleRoyale`, `WhiteLakeMuskegon`
+   and so on) into your Zomboid
    mods folder: `%USERPROFILE%\Zomboid\mods` on Windows, `~/Zomboid/mods` on
    Linux and macOS.
 4. Start Project Zomboid (Build 42), enable the map under Mods, and start a
@@ -359,6 +496,8 @@ it.
 - Forest cover © ESA WorldCover project 2021, contains modified Copernicus
   Sentinel data, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/),
   via Overture Maps.
+- Building footprints and heights for most of White Lake to Muskegon are
+  Microsoft's ML building footprints, under the ODbL, via Overture Maps.
 - [KnoxMap](https://github.com/badnew21/KnoxmapDM) by euclid80tr, MIT. It is
   built on Knoxify by arytek and on the PZ Mapping Tools by Alree/Unjammer
   (TileZed and WorldEd by Tim Baker).

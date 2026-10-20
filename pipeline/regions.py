@@ -51,8 +51,8 @@ def _name(r):
     return (n or {}).get("primary") if isinstance(n, dict) else None
 
 
-def _folder(place: str) -> str:
-    return f"{MAIN} - {place}"
+def _folder(place: str, main: str = MAIN) -> str:
+    return f"{main} - {place}"
 
 
 def settlement_points(fr, windows: list[dict], windows_dir: str) -> dict[str, list]:
@@ -160,35 +160,36 @@ def spawnpoints_lua(points, origin) -> str:
             + body + "\n    }\n  }\nend\n")
 
 
-def write_folders(maps_dir: str, regions: dict, origin, description: str = "") -> list[str]:
-    """A spawn-region folder per place beside the island's map folder."""
+def write_folders(maps_dir: str, regions: dict, origin, description: str = "",
+                  main: str = MAIN) -> list[str]:
+    """A spawn-region folder per place beside the map's own folder."""
     for old in os.listdir(maps_dir):
-        if old.startswith(f"{MAIN} - "):
+        if old.startswith(f"{main} - "):
             shutil.rmtree(os.path.join(maps_dir, old))
     made = []
     for place, points in regions.items():
-        folder = _folder(place)
+        folder = _folder(place, main)
         d = os.path.join(maps_dir, folder)
         os.makedirs(d)
         with open(os.path.join(d, "map.info"), "w", encoding="utf-8") as f:
             f.write(f"title={folder}\n"
-                    f"lots={MAIN}\n"
+                    f"lots={main}\n"
                     "lots=Muldraugh, KY\n"
                     "fixed2x=true\n"
-                    f"description=Isle Royale, starting at {place}. {description}\n")
+                    f"description={main}, starting at {place}. {description}\n")
         with open(os.path.join(d, "spawnpoints.lua"), "w", encoding="utf-8") as f:
             f.write(spawnpoints_lua(points, origin))
         made.append(folder)
     return made
 
 
-def write_server_regions(path: str, folders: list[str]) -> None:
-    """A dedicated server's spawn region list: the island at random, then each place."""
+def write_server_regions(path: str, folders: list[str], main: str = MAIN) -> None:
+    """A dedicated server's spawn region list: the whole map at random, then each place."""
     lines = ["-- Copy this into Zomboid/Server/ and rename the file to",
              "-- <your server name>_spawnregions.lua - the name has to match",
              "-- the server, not the map.",
              "function SpawnRegions()", "    return {",
-             f'        {{ name = "{MAIN}", file = "media/maps/{MAIN}/spawnpoints.lua" }},']
+             f'        {{ name = "{main}", file = "media/maps/{main}/spawnpoints.lua" }},']
     lines += [f'        {{ name = "{f}", file = "media/maps/{f}/spawnpoints.lua" }},' for f in folders]
     lines += ["    }", "end"]
     with open(path, "w", encoding="utf-8") as f:

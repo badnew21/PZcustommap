@@ -82,6 +82,32 @@ def _corner_row(entry) -> int:
     return ty // SIDE
 
 
+def _touching(lots: list) -> list[list]:
+    """`lots` ([(building, tx, ty, level)]) in groups whose outlines touch or
+    overlap, corners counting; each group keeps the lots' order."""
+    parent = list(range(len(lots)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    buckets: dict[tuple[int, int], list[int]] = {}
+    for i, (b, tx, ty, _lv) in enumerate(lots):
+        for gx in range((tx - 1) // 64, (tx + b.width + 1) // 64 + 1):
+            for gy in range((ty - 1) // 64, (ty + b.height + 1) // 64 + 1):
+                for j in buckets.get((gx, gy), ()):
+                    bj, jx, jy, _ = lots[j]
+                    if tx - 1 <= jx + bj.width and jx - 1 <= tx + b.width \
+                            and ty - 1 <= jy + bj.height and jy - 1 <= ty + b.height:
+                        parent[find(i)] = find(j)
+                buckets.setdefault((gx, gy), []).append(i)
+    groups: dict[int, list] = {}
+    for i in range(len(lots)):
+        groups.setdefault(find(i), []).append(lots[i])
+    return list(groups.values())
+
+
 def compile_project(project: str, origin_x: int, keep: set, workers: int, scratch: str,
                     done_file: str, rules_file: str, say=print) -> None:
     """Lot files for the cells in `keep`, into <project>/lots."""
@@ -101,11 +127,34 @@ def compile_project(project: str, origin_x: int, keep: set, workers: int, scratc
 
     # The building tables, read once, as make_map_source does.
     lots = map_source.read_lots(project)
-    parsed = [(parse_tbx(open(os.path.join(project, "buildings", f"{t}.tbx"), encoding="utf-8").read()),
-               tx, ty, lv) for t, tx, ty, lv, _w, _h in lots]
-    placed = placed_rooms([(b, tx, ty, lv) for b, tx, ty, lv in parsed if b.floors])
-    reach = [(b.width, b.height) for b, *_ in parsed]
-    del parsed
+    # Only buildings with rooms are kept parsed. The tile-only lots - props,
+    # fences, trees - are a whole cell of tiles each, and a map with thousands
+    # of them parsed at once ran a 16 GB machine out of memory; all that is
+    # needed of them is their size.
+    with_rooms, reach = [], []
+    for t, tx, ty, lv, _w, _h in lots:
+        text = open(os.path.join(project, "buildings", f"{t}.tbx"), encoding="utf-8").read()
+        if "<room " in text:
+            b = parse_tbx(text)
+            reach.append((b.width, b.height))
+            if b.floors:
+                with_rooms.append((b, tx, ty, lv))
+        else:
+            m = re.search(r'<building[^>]* width="(\d+)" height="(\d+)"', text)
+            reach.append((int(m[1]), int(m[2])))
+    # Room tables a group of touching buildings at a time: placed_rooms joins
+    # buildings that touch, so ones that do not are independent, and handing
+    # it forty thousand at once is slow (it looks each one up in a list).
+    # In the order placed_rooms gives them for the whole map at once: by
+    # 300-tile source cell, then project order of each group's first lot.
+    first_index: dict[tuple[int, int], int] = {}
+    for i, (_b, tx, ty, _lv) in enumerate(with_rooms):
+        first_index.setdefault((tx, ty), i)
+    placed = []
+    for group in _touching(with_rooms):
+        placed += placed_rooms(group)
+    placed.sort(key=lambda p: (p[1] // 300, p[0] // 300, first_index.get((p[0], p[1]), 0)))
+    del with_rooms
     # Each row is handed only the room tables it writes. The whole of them for
     # a town of 20,000 buildings, copied to every worker, ran a 16 GB machine
     # out of memory.
