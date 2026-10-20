@@ -8,7 +8,7 @@ Build 42 maps of real places at one tile to the metre, made with
 |---|---|---|
 | [Isle Royale](#isle-royale) | Isle Royale National Park, Michigan: 570 km² of island wilderness in Lake Superior | `release/IsleRoyale.7z.001`–`.005` (425 MB, 11 GB unpacked) |
 | [Evanston](#evanston) | Evanston, Illinois: the whole city inside its real boundary, on Lake Michigan | `release/Evanston.7z` (41 MB, 690 MB unpacked) |
-| [Evanston: Central Street test](#true-to-life-test-central-street) | North Evanston built with real building outlines, street lines and heights | `release/EvanstonCentral.7z` (7 MB) |
+| [Evanston: Central Street test](#true-to-life-test-central-street) | North Evanston from Bent Park to Sheridan Road and down Ridgeway Avenue, built with real building outlines, street lines and heights | `release/EvanstonCentral.7z` (10 MB) |
 
 The two sit side by side in the game world, so both mods can be installed at
 once. See [Installing](#installing) for how to put one in the game.
@@ -258,7 +258,7 @@ world.
 
 ## True-to-life test: Central Street
 
-`release/EvanstonCentral.7z` (7 MB) is north Evanston around Central Street
+`release/EvanstonCentral.7z` (10 MB) is north Evanston around Central Street
 built as close to the real buildings as KnoxMap can get, as a trial before
 rebuilding the whole city that way:
 
@@ -270,10 +270,14 @@ rebuilding the whole city that way:
   buildings beside them don't move.
 - **Real heights, uncapped** (`max_levels = 30`).
 
-It covers Central Street from the Metra station to Sheridan Road, with the
-CTA Central station, Evanston Hospital, Ryan Field and the streets of houses
-around them: 3,641 buildings in 72 cells. It sits beside Evanston in the game
-world, so both can be installed together.
+It covers Central Street from just west of Bent Park to Sheridan Road, and
+Ridgeway Avenue for five blocks south of Central (Harrison, Colfax, Grant,
+Golf, Foster) with the houses on both sides. Along the way are the Central
+Street shops, the Metra and CTA Central stations, Evanston Hospital, Ryan
+Field and the streets of houses around them: 5,777 buildings in 136 cells. It
+sits beside Evanston in the game world, so both can be installed together.
+
+![The Central Street test area](docs/evanston_central_overview.png)
 
 The pictures show the same ground from both builds, with each building drawn
 as the floor plan knoxbuild actually built. On the left is the current full

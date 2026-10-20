@@ -30,6 +30,7 @@ sys.path.insert(0, HERE)
 import isle  # noqa: E402,F401  (KnoxMap on the path)
 import town  # noqa: E402
 from shapely.geometry import box, mapping  # noqa: E402
+from shapely.ops import unary_union  # noqa: E402
 
 ROOT = os.path.dirname(HERE)
 
@@ -66,14 +67,19 @@ TOWNS = {
         "mod_id": "EvanstonCentral",
         "data": "evanston",
         "outline": "Evanston",
-        "clip": (42.0575, -87.7120, 42.0705, -87.6760),
+        # Central Street from just west of Bent Park to Sheridan Road, and
+        # five blocks down Ridgeway Avenue (Central to Foster), with the
+        # houses either side of it.
+        "clip": [(42.0575, -87.7260, 42.0705, -87.6760),
+                 (42.0528, -87.7250, 42.0575, -87.7190)],
         "fetch": (42.012, -87.745, 42.078, -87.650),
         "settings": {"preset": "suburb", "max_levels": 30, "apartment_chance": 0.35,
                      "apartment_footprint": 300, "building_alignment": "real",
                      "straight_roads": 0},
         # Past Evanston's 19 cells (358-376); even, see Town.__init__.
         "origin": (380, 0),
-        "description": ("North Evanston round Central Street, at one tile to the metre, built "
+        "description": ("North Evanston round Central Street, from Bent Park to Sheridan Road "
+                        "and five blocks down Ridgeway Avenue, at one tile to the metre, built "
                         "as close to the real buildings as KnoxMap gets: real outlines and "
                         "angles, real street lines and real heights. Made from Overture Maps "
                         "(OpenStreetMap) with KnoxMap."),
@@ -126,8 +132,10 @@ def stage_render(t: Town, a) -> None:
     from generator import osm, renderer
     outline = town.outline(t.data, t.cfg["outline"])
     if t.cfg.get("clip"):
-        cs, cw, cn, ce = t.cfg["clip"]
-        outline = outline.intersection(box(cw, cs, ce, cn))
+        # A (south, west, north, east) box, or a list of them joined.
+        clips = t.cfg["clip"]
+        clips = [clips] if isinstance(clips[0], (int, float)) else clips
+        outline = outline.intersection(unary_union([box(cw, cs, ce, cn) for cs, cw, cn, ce in clips]))
     west, south, east, north = outline.bounds
     fs, fw, fn, fe = t.cfg["fetch"]
     feats = town.features(t.data, box(fw, fs, fe, fn))
