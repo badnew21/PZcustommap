@@ -279,8 +279,43 @@ sits beside Evanston in the game world, so both can be installed together.
 
 ![The Central Street test area](docs/evanston_central_overview.png)
 
-The pictures show the same ground from both builds, with each building drawn
-as the floor plan knoxbuild actually built. On the left is the current full
+### Street details and tall trees
+
+The test also has the set dressing KnoxMap doesn't place on its own
+(`pipeline/details.py`), plus more wear on the streets than KnoxMap's
+defaults:
+
+- **Street trees**: 9,777 in the grass verge between kerb and pavement on the
+  residential streets, about 11 m apart, one species to a street (linden,
+  red maple or birch), the way a city plants them.
+- **Taller trees**: 13,363 of KnoxMap's single garden and park trees replaced
+  by Build 42's Jumbo, XL and XXL trees, the largest mostly in the parks.
+  Woods keep their normal trees, since giant trees packed together would
+  overlap.
+- **Alleys**: 1,341 trash cans behind the garages and 186 dumpsters.
+- **Benches**: 54 at the mapped bus stops, each with a bin, and 175 along park
+  paths.
+- **Wear**: three times KnoxMap's litter, twice the cracks and a bit more
+  grime, and 40% more parked cars.
+
+Every tile comes from the map tools' own furniture list or is one KnoxMap
+already checked against the game's sprites. Jumbo trees go in as their main
+`_0` tile, from which the game builds the rest of the tree, as the mapping
+tools' notes on Build 42 Jumbo trees describe. A `WorldGenOverride.lua` in
+the map folder stops world generation from replacing them. Stop signs and
+traffic lights are left out because the road-sign sheet isn't labelled.
+
+Below, Jumbo trees are green (darker and larger for XL and XXL), cans grey,
+dumpsters blue and benches brown:
+
+![Street trees and yard trees on a residential block](docs/evanston_central_details_houses.png)
+
+![Central Street at the Metra station](docs/evanston_central_details_central_st.png)
+
+`pipeline/details_picture.py` draws these for any box.
+
+The pictures below show the same ground from both builds, with each building
+drawn as the floor plan knoxbuild actually built. On the left is the current full
 Evanston build; on the right is the test.
 
 ![Central Street: current build and the test](docs/compare_central_street.png)

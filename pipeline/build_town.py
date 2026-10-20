@@ -75,7 +75,10 @@ TOWNS = {
         "fetch": (42.012, -87.745, 42.078, -87.650),
         "settings": {"preset": "suburb", "max_levels": 30, "apartment_chance": 0.35,
                      "apartment_footprint": 300, "building_alignment": "real",
-                     "straight_roads": 0},
+                     "straight_roads": 0, "parking_density": 1.4},
+        # Street trees, Jumbo trees, alley cans and dumpsters, bus stop and
+        # park benches, and more wear on the streets (details.py).
+        "details": True,
         # Past Evanston's 19 cells (358-376); even, see Town.__init__.
         "origin": (380, 0),
         "description": ("North Evanston round Central Street, from Bent Park to Sheridan Road "
@@ -130,6 +133,9 @@ def stage_fetch(t: Town, a) -> None:
 
 def stage_render(t: Town, a) -> None:
     from generator import osm, renderer
+    if t.cfg.get("details"):
+        import details
+        details.install()
     outline = town.outline(t.data, t.cfg["outline"])
     if t.cfg.get("clip"):
         # A (south, west, north, east) box, or a list of them joined.
@@ -165,6 +171,9 @@ def stage_render(t: Town, a) -> None:
 def stage_buildings(t: Town, a) -> None:
     import knoxbuild.build as kbuild
     t.set_origin()
+    if t.cfg.get("details"):
+        import details
+        details.install()
     rc = kbuild.main([t.project])
     if rc:
         raise SystemExit(f"knoxbuild failed ({rc})")
@@ -185,6 +194,10 @@ def stage_mod(t: Town, a) -> None:
     import lots
     root, n, extras = lots.package(t.project, t.cfg["title"], t.cfg["mod_id"], t.mods,
                                    t.cfg["description"])
+    if t.cfg.get("details"):
+        import details
+        for folder in os.listdir(os.path.join(root, "common", "media", "maps")):
+            details.write_worldgen_override(os.path.join(root, "common", "media", "maps", folder))
     with open(os.path.join(root, "ATTRIBUTION.txt"), "a", encoding="utf-8") as f:
         f.write("\nThe streets, buildings, land use, water and businesses are OpenStreetMap\n"
                 "data as published by Overture Maps (https://overturemaps.org, ODbL),\n"

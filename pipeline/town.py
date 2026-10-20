@@ -37,6 +37,7 @@ HIGHWAY = {"motorway": "motorway", "trunk": "trunk", "primary": "primary",
            "steps": "steps", "cycleway": "cycleway", "path": "path", "track": "track",
            "bridleway": "bridleway", "unknown": "road"}
 FOOTWAY_SUBCLASS = {"sidewalk": "sidewalk", "crosswalk": "crossing"}
+SERVICE_SUBCLASS = {"alley", "driveway", "parking_aisle"}
 MIN_PLACE_CONFIDENCE = 0.6
 
 # Overture place categories, by the words in them, to the OSM tags knoxbuild
@@ -205,6 +206,8 @@ def _segment_tags(r) -> dict | None:
         tags["name"] = _name(r)
     if hw == "footway" and r.get("subclass") in FOOTWAY_SUBCLASS:
         tags["footway"] = FOOTWAY_SUBCLASS[r["subclass"]]
+    if hw == "service" and r.get("subclass") in SERVICE_SUBCLASS:
+        tags["service"] = r["subclass"]
     surf = r.get("road_surface") or []
     if surf and not surf[0].get("between"):
         tags["surface"] = surf[0].get("value")
