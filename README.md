@@ -9,7 +9,7 @@ Build 42 maps of real places at one tile to the metre, made with
 | [Isle Royale](#isle-royale) | Isle Royale National Park, Michigan: 570 km² of island wilderness in Lake Superior | `release/IsleRoyale.7z.001`–`.005` (425 MB, 11 GB unpacked) |
 | [Evanston](#evanston) | Evanston, Illinois: the whole city inside its real boundary, on Lake Michigan | `release/Evanston.7z` (41 MB, 690 MB unpacked) |
 | [Evanston: Central Street test](#true-to-life-test-central-street) | North Evanston from Bent Park to Sheridan Road and down Ridgeway Avenue, built with real building outlines, street lines and heights | `release/EvanstonCentral.7z` (10 MB) |
-| [White Lake to Muskegon](#white-lake-to-muskegon) | The Lake Michigan shore from Montague and Whitehall to Muskegon: White Lake and its channel, the beach houses, the dunes and the city of Muskegon | `release/WhiteLakeMuskegon.7z.001`–`.002` (151 MB, 2.8 GB unpacked) |
+| [White Lake to Muskegon](#white-lake-to-muskegon) | The Lake Michigan shore from Montague and Whitehall to Muskegon: White Lake and its channel, the beach houses, the dunes and the city of Muskegon | `release/WhiteLakeMuskegon.7z.001`–`.002` (179 MB, 2.7 GB unpacked) |
 
 They sit side by side in the game world, so all of them can be installed at
 once. See [Installing](#installing) for how to put one in the game.
@@ -499,8 +499,8 @@ GB. `--only w05_06,w06_06` rebuilds just those windows. Delete a window's
 | On the map | the coast, about 170 km² of land and lake |
 | Buildings | 26,639 |
 | Build 42 cells compiled | 2,867 |
-| Mod on disk | 2.8 GB |
-| Build time | windows 24 min, paste 3 min, compile about 16 min (4 cores) |
+| Mod on disk | 2.7 GB |
+| Build time | windows 15 min, paste 3 min, compile 22 min (4 cores) |
 
 Project Zomboid needs extra memory for a map this size. KnoxMap writes a
 `HOW TO PLAY.txt` into the mod that says how to give the game more.
