@@ -71,6 +71,54 @@ BUILDING_TAGS = {
 TOWERS = {"White River Light Station": ("west", 4)}
 
 
+# Businesses this far from a building are moved into it, if it is at least
+# this big (a shop, not the shed beside it).
+PLACE_REACH_M = 25
+PLACE_MIN_M2 = 40
+# Overture's own confidence that a business is where it says. The town
+# pipeline asks for 0.6; here 0.5 takes in another 160 or so.
+PLACE_CONFIDENCE = 0.5
+
+# Most footprints here are machine-detected, with no use on them, so the
+# detached garage and the shed out the back came out as tiny houses. An
+# untagged footprint this small with a house-sized one this near is one.
+GARAGE_M2 = (30, 85)
+SHED_M2 = (6, 30)
+HOUSE_MIN_M2 = 70
+OUTBUILDING_REACH_M = 30
+
+
+def place_tags(r) -> dict | None:
+    """town.place_tags, at this map's confidence."""
+    if (r.get("confidence") or 0) < PLACE_CONFIDENCE:
+        return None
+    return town.place_tags({**r, "confidence": max(r.get("confidence") or 0,
+                                                   town.MIN_PLACE_CONFIDENCE)})
+
+
+def _outbuildings(geoms: list, classes: list) -> dict[int, str]:
+    """{index: "garage" | "shed"} for the untagged footprints that are a
+    house's outbuilding: small, and beside a footprint at least twice their
+    size and big enough to be the house."""
+    tree = shapely.STRtree(geoms)
+    out = {}
+    for i, (g, cls) in enumerate(zip(geoms, classes)):
+        if cls:
+            continue
+        a = g.area
+        kind = "garage" if GARAGE_M2[0] <= a < GARAGE_M2[1] else \
+            "shed" if SHED_M2[0] <= a < SHED_M2[1] else None
+        if kind is None:
+            continue
+        for j in tree.query(g.buffer(OUTBUILDING_REACH_M)):
+            h = geoms[j]
+            if j != i and h.area >= max(HOUSE_MIN_M2, 2 * a) \
+                    and h.distance(g) <= OUTBUILDING_REACH_M:
+                out[i] = kind
+                break
+    return out
+
+
 def _name(r):
     return town._name(r)
 
@@ -206,10 +254,12 @@ class Data:
                     t["layer"] = str(max(1, level))
                 self._add(self.utm(part), t)
 
-        for r, g in self._rows("building"):
-            if g.geom_type not in ("Polygon", "MultiPolygon") or r.get("is_underground"):
-                continue
-            tags = {"building": r.get("class") or "yes"}
+        buildings = [(r, g) for r, g in self._rows("building")
+                     if g.geom_type in ("Polygon", "MultiPolygon") and not r.get("is_underground")]
+        outbuildings = _outbuildings([g for _r, g in buildings],
+                                     [r.get("class") for r, _g in buildings])
+        for i, (r, g) in enumerate(buildings):
+            tags = {"building": r.get("class") or outbuildings.get(i) or "yes"}
             if _name(r):
                 tags["name"] = _name(r)
             if r.get("height"):
@@ -227,10 +277,23 @@ class Data:
                           {"man_made": "lighthouse", "building:levels":
                            str(TOWERS[_name(r)][1]), "name": _name(r)})
 
+        # Businesses, moved into the building they are in. Overture puts a
+        # good third of them on the street in front, or on the plot beside
+        # the shop; knoxbuild only fits out a building with a point inside it.
+        footprints = [g for _r, g in buildings]
+        tree = shapely.STRtree(footprints)
         for r, g in self._rows("place"):
-            tags = town.place_tags(r)
-            if tags and g.geom_type == "Point":
-                self._add(g, tags)
+            tags = place_tags(r)
+            if not tags or g.geom_type != "Point":
+                continue
+            if not any(footprints[i].contains(g) for i in tree.query(g)):
+                near = [i for i in tree.query(g.buffer(PLACE_REACH_M))
+                        if footprints[i].area >= PLACE_MIN_M2
+                        and footprints[i].distance(g) <= PLACE_REACH_M]
+                if near:
+                    best = min(near, key=lambda i: footprints[i].distance(g))
+                    g = footprints[best].representative_point()
+            self._add(g, tags)
 
     @staticmethod
     def _tower_at(g, end: str, _levels: int):

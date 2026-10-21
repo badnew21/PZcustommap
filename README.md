@@ -363,12 +363,12 @@ and leaves out the farms and woods inland.
   Muskegon Lake channel and Pere Marquette beach.
 - **North Muskegon and Muskegon**: downtown on its diagonal grid, Western
   Avenue, Hackley Park, the waterfront and the neighbourhoods round them.
-- **Every street and building in Overture Maps** along the coast: 26,688
+- **Every street and building in Overture Maps** along the coast: 26,639
   furnished buildings, with rows of shops and terraces split into their
   units. Heights are real for about 80% of them, and outlines keep their
   real shape and angle.
-- **Woods, farmland, wetland and dunes** from ESA WorldCover, with lakes,
-  ponds, rivers and streams from OpenStreetMap.
+- **Open woods of tall trees**, farmland, wetland and dunes from ESA
+  WorldCover, with lakes, ponds, rivers and streams from OpenStreetMap.
 - **An in-game map (M)** with the towns, lakes, parks and named streets.
 - **Zombies by population**, from KnoxMap's estimate of who lived and worked
   in each building.
@@ -395,25 +395,49 @@ building stock is known (`pipeline/styles.py`):
 Each building gets its walls from where it stands, so a building on the
 line between two parts of the build comes out the same from both.
 
-### Trees
+### Inside the buildings
 
-- **Forest** is maple-heavy hardwood: red maple, American basswood (linden)
-  and birch, drawn from Build 42's per-species sheets.
-- **Hemlock and pine through the woods** (`pipeline/conifers.py`): Build 42's
-  Jumbo Canadian hemlock and Virginia pine, at Jumbo, XL and XXL size, about
-  one in every 200–300 m² of woodland and more within 2 km of Lake
-  Michigan. They stand over the hardwoods the way white pine and hemlock do
-  on this shore. The broadleaf trees right round each one are cleared, so
-  trunks don't overlap.
-- **Pines on the dunes**: a thin scatter of smaller Virginia pines on the
-  open sand and scrub near the lake.
-- **Street and yard trees** (`pipeline/details.py`): a tree in the verge every
-  11 m on residential streets, and most single garden and park trees swapped
-  for Jumbo maples, basswoods, birches, hemlocks and pines.
+Most outlines here are machine-detected, with no use on them, so on its own
+KnoxMap builds nearly all of them as houses. Two things in
+`pipeline/region.py` make the insides fit better:
 
-Every Jumbo tree is placed as its sheet's main `_0` tile, which is how the map
-tools' Build 42 notes say to place one. A `WorldGenOverride.lua` in the map
-folder stops world generation from replacing them.
+- **Garages and sheds.** An untagged outline of 30–85 m² within 30 m of a
+  building at least twice its size is a detached garage, and one of 6–30 m²
+  a garden shed. About 5,700 garages and 1,100 sheds across the whole area
+  are built as one-room outbuildings instead of two-room houses.
+- **Businesses in their buildings.** knoxbuild fits out a shop, restaurant,
+  bar, office or clinic only where a business point is inside the outline.
+  Overture puts many of them on the street out front, so each one within
+  25 m of a building of 40 m² or more is moved into it. In downtown Muskegon
+  that takes the fitted-out businesses from 102 to 138.
+
+### Trees, flowers and the streets
+
+The woods are thinned and given tall trees (`pipeline/woods.py`):
+
+- **Open woods.** The map tools paint full woodland as a tree on every tile.
+  Here a wood keeps one tree in five on its densest tiles, fewer towards its
+  edges, and the rest is long grass or open ground. Scrub keeps about a
+  third. Single trees in gardens are left as they are.
+- **Tall trees through them**: Build 42's Jumbo, XL and XXL trees, about one
+  in every 90 m² of wood. Inland they are mostly red maple and basswood, with
+  birch, hemlock and pine; within 2 km of Lake Michigan hemlock and pine make
+  up most of them. The regular trees round each one are cleared, so trunks
+  don't overlap.
+- **Pines on the dunes**: a thin scatter of Virginia pines on the open sand
+  near the lake.
+- **Big garden, park and street trees** (`pipeline/details.py`): a street tree
+  in the verge every 11 m on residential streets, and 95% of single garden
+  and park trees swapped for Jumbo maples, basswoods, birches, hemlocks and
+  pines, mostly XL and XXL in the parks.
+- **Flower beds** along the lawn side of about a third of the buildings' walls.
+- **Tidy streets.** Half KnoxMap's usual litter, and less cracking and grime.
+
+The forest fill is red maple, American basswood (linden) and birch, from
+Build 42's per-species sheets. Every Jumbo tree is placed as its sheet's main
+`_0` tile, which is how the map tools' Build 42 notes say to place one. A
+`WorldGenOverride.lua` in the map folder stops world generation from
+replacing them.
 
 ### Where you start
 
@@ -473,7 +497,7 @@ GB. `--only w05_06,w06_06` rebuilds just those windows. Delete a window's
 |---|---|
 | Frame | 21,300 × 26,700 tiles (71 × 89 KnoxMap cells) |
 | On the map | the coast, about 170 km² of land and lake |
-| Buildings | 26,688 |
+| Buildings | 26,639 |
 | Build 42 cells compiled | 2,867 |
 | Mod on disk | 2.8 GB |
 | Build time | windows 24 min, paste 3 min, compile about 16 min (4 cores) |

@@ -81,6 +81,14 @@ SETTINGS = {"preset": "suburb", "max_levels": 12, "apartment_chance": 0.15,
 YARD_SPECIES = ["redmaple", "americanlinden", "redmaple", "riverbirch", "canadianhemlock",
                 "virginiapine", "dogwood"]
 PARK_SPECIES = ["redmaple", "americanlinden", "canadianhemlock", "riverbirch", "virginiapine"]
+# details.py, tuned for a tidy lakeside town with big old trees: much less
+# litter, cracking and grime than the Evanston test, and nearly every single
+# garden, park and street tree a tall one.
+DETAILS = {"WEAR": {"LITTER_SHARE": 0.5, "CRACK_SHARE": 0.7, "GRIME_SHARE": 0.8},
+           "YARD_JUMBO_SHARE": 0.95,
+           "STREET_SIZES": [("JUMBO", 0.45), ("JUMBOXL", 0.55)],
+           "YARD_SIZES": [("JUMBO", 0.35), ("JUMBOXL", 0.45), ("JUMBOXXL", 0.20)],
+           "PARK_SIZES": [("JUMBO", 0.25), ("JUMBOXL", 0.45), ("JUMBOXXL", 0.30)]}
 # The forest fill (rules.py): sugar-maple country, so maple first, with
 # basswood and birch.
 FOREST_SPECIES = ["e_redmaple_1", "e_americanlinden_1", "e_redmaple_1", "e_riverbirch_1"]
@@ -175,6 +183,16 @@ def _cells_touching(fr, shape) -> set[tuple[int, int]]:
     return out
 
 
+def _touches(rect, cells) -> bool:
+    """Whether frame tiles [x0, x1) x [y0, y1) reach any of these Build 42 cells."""
+    import lots
+    x0, y0, x1, y1 = rect
+    wx = WORLD_ORIGIN[0] * CELL
+    return any((cx, cy) in cells
+               for cx in range((x0 + wx) // lots.SIDE, (x1 - 1 + wx) // lots.SIDE + 1)
+               for cy in range(y0 // lots.SIDE, (y1 - 1) // lots.SIDE + 1))
+
+
 def window_dir(name: str) -> str:
     return os.path.join(WORK, "windows", name)
 
@@ -187,7 +205,7 @@ def build_window(job: dict) -> dict:
     from generator import osm, renderer
     import knoxbuild.build as kbuild
     import knoxbuild.world as kworld
-    import conifers
+    import woods
     import details
     import styles
 
@@ -218,9 +236,11 @@ def build_window(job: dict) -> dict:
     osm.save_cache(cache, bbox, feats)
     details.YARD_SPECIES = YARD_SPECIES
     details.PARK_SPECIES = PARK_SPECIES
+    for k, v in DETAILS.items():
+        setattr(details, k, v)
     details.install()
-    conifers.near_lake = lake_mask(fr, x0, y0, w, h)
-    conifers.install()
+    woods.near_lake = lake_mask(fr, x0, y0, w, h)
+    woods.install()
     renderer.render(feats, *bbox, meters_per_tile=1.0, output_dir=wdir, map_name=name,
                     spawn_density=s.spawn_density, tree_density=s.tree_density,
                     forest_density=s.forest_density, rotation=sp.rotation,
@@ -312,6 +332,10 @@ _lake_band = None
 
 def stage_windows(a) -> None:
     jobs = cores(frame())
+    if COAST_ONLY:
+        # Windows with nothing of the coast in them are left unbuilt.
+        coast = coast_cells(frame())
+        jobs = [j for j in jobs if _touches(j["win"], coast)]
     if a.only:
         jobs = [j for j in jobs if j["name"] in a.only.split(",")]
     say(f"windows: {len(jobs)} cores of {CORE}x{CORE} cells")
