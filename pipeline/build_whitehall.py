@@ -530,6 +530,10 @@ def stage_compile(a) -> None:
     import rules
     from tools import map_source
     rules.TREE_SPECIES = FOREST_SPECIES
+    # Long grass is grass here: the open woods are long grass under the
+    # trees, and with the tools' groundcover plants in it a quarter of every
+    # wood came out as flower beds.
+    rules.WILD_FLOWERS = False
     ox = WORLD_ORIGIN[0] * CELL
     rules_file = rules.make_rules(map_source.rules_path(), os.path.join(WORK, "rules"))
     # Every cell with land on it and one of open lake round that - and the

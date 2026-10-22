@@ -18,8 +18,8 @@ is pine in the sand. This makes the woods look like that:
   regular trees round each are cleared, so trunks do not stand in each other.
 * Scrub is thinned the same way, about a third of it left.
 * On open sand and scrub by the lake, a thin scatter of smaller pines.
-* Flower beds: a run of flowers along part of the wall of about a third of
-  the buildings, on the lawn side.
+* Flower beds: a run of flowers along part of the wall of about one building
+  in eight, on the lawn side.
 
 Each tall tree is placed as its Jumbo sheet's main `_0` tile, which the game
 builds the rest of the tree from (PZ Mapping Tools,
@@ -63,7 +63,7 @@ DUNE_CHANCE = 0.4
 DUNE_SIZES = [("JUMBO", 0.6), ("JUMBOXL", 0.4)]
 
 FLOWER_BLOCK = 6          # tiles: flower beds come in runs about this long
-FLOWER_SHARE = 0.35       # of the stretches of wall that get one
+FLOWER_SHARE = 0.12       # of the stretches of wall that get one
 GRASS = (C.DARK_GRASS, C.MEDIUM_GRASS, C.LIGHT_GRASS)
 LAYER = "Furniture"
 

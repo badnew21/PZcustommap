@@ -456,7 +456,11 @@ The woods are thinned and given tall trees (`pipeline/woods.py`):
   in the verge every 11 m on residential streets, and 95% of single garden
   and park trees swapped for Jumbo maples, basswoods, birches, hemlocks and
   pines, mostly XL and XXL in the parks.
-- **Flower beds** along the lawn side of about a third of the buildings' walls.
+- **Flower beds** along the lawn side of about one building in eight. The
+  map tools' long-grass rules mix a few groundcover plants into the grass,
+  which the Build 42 tree fix in `pipeline/rules.py` turns into flower beds;
+  for this map they are left out, so the long grass under the woods is just
+  grass.
 - **Tidy streets.** Half KnoxMap's usual litter, and less cracking and grime.
 
 The forest fill is red maple, American basswood (linden) and birch, from

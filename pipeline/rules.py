@@ -27,6 +27,12 @@ TREE_SPECIES = ["e_riverbirch_1", "e_redmaple_1", "e_riverbirch_1", "e_americanl
 KNOXMAP_SPECIES = r"e_(?:redmaple|riverbirch|americanlinden|dogwood)_1"
 FLOWER_SHEET = "f_flowerbed_1"
 FLOWER_INDICES = [0, 1, 2, 3, 4, 5]
+# The tools' grass rules (long grass, the sparse woods) mix a few groundcover
+# plants in with the grass, and those are what becomes the flower sheet. Off,
+# they are left out of everything but the Flowers alias itself, so long grass
+# is grass and flowers grow only where a map paints flowers.
+WILD_FLOWERS = True
+GROUNDCOVER = re.compile(r"\s*(?:vegetation_groundcover_01|f_flowerbed_1)_\d+\s*$")
 
 
 def make_rules(tools_rules: str, out_dir: str) -> str:
@@ -43,6 +49,8 @@ def make_rules(tools_rules: str, out_dir: str) -> str:
     # Either the shipped rules or ones KnoxMap's Setup already patched.
     text = re.sub(r"vegetation_trees_01_(\d+)", tree, text)
     text = re.sub(KNOXMAP_SPECIES + r"_(\d+)", tree, text)
+    if not WILD_FLOWERS:
+        text = _without_wild_flowers(text)
     f = [0]
 
     def flower(_m):
@@ -57,3 +65,19 @@ def make_rules(tools_rules: str, out_dir: str) -> str:
     shutil.copy2(os.path.join(os.path.dirname(tools_rules), "Blends.txt"),
                  os.path.join(out_dir, "Blends.txt"))
     return out
+
+
+def _without_wild_flowers(text: str) -> str:
+    """The rules with their groundcover plants taken out of every tile list
+    but the Flowers alias's."""
+    out, block, name = [], None, ""
+    for line in text.splitlines(keepends=True):
+        word = line.strip()
+        if word in ("alias", "rule"):
+            block, name = word, ""
+        elif word.startswith("name ="):
+            name = word.split("=", 1)[1].strip()
+        if GROUNDCOVER.match(line) and not (block == "alias" and name == "flowers"):
+            continue
+        out.append(line)
+    return "".join(out)
