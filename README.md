@@ -401,15 +401,41 @@ Most outlines here are machine-detected, with no use on them, so on its own
 KnoxMap builds nearly all of them as houses. Two things in
 `pipeline/region.py` make the insides fit better:
 
-- **Garages and sheds.** An untagged outline of 30–85 m² within 30 m of a
+- **Garages and sheds.** An untagged outline of 30–85 m² within 20 m of a
   building at least twice its size is a detached garage, and one of 6–30 m²
-  a garden shed. About 5,700 garages and 1,100 sheds across the whole area
-  are built as one-room outbuildings instead of two-room houses.
+  a garden shed, unless three or more buildings of about its own size stand
+  within 30 m: a row like that is a colony of cottages, such as the
+  Wabaningo Club's on Murray Road, not a house's garages. About 3,600
+  garages and 1,000 sheds across the whole area are built as one-room
+  outbuildings instead of two-room houses.
+- **Real garage doors** (`pipeline/garages.py`). knoxbuild gives a garage
+  its way in for a car as three ordinary doors side by side. Each of those
+  is replaced with the game's own three-tile garage door (`walls_garage_01`,
+  as the map tools place it), and whatever was furnished just inside it is
+  cleared.
+- **Houses, not flats.** A machine-measured height is to the roof ridge, so a
+  two-storey house under a steep roof read as three storeys, and KnoxMap
+  builds anything of three storeys as a block of flats. Small houses and
+  small untagged outlines (under 300 m²) are capped at two storeys, and
+  nothing on the shore or the lakes is built as flats.
 - **Businesses in their buildings.** knoxbuild fits out a shop, restaurant,
   bar, office or clinic only where a business point is inside the outline.
   Overture puts many of them on the street out front, so each one within
   25 m of a building of 40 m² or more is moved into it. In downtown Muskegon
   that takes the fitted-out businesses from 102 to 138.
+
+### Loot
+
+The towns are built at their real density and every house is furnished, so
+with the game's own loot tables in every cupboard and fridge there was far
+more to find than in vanilla. `pipeline/whitehall_loot.lua`, shipped in the
+mod, keeps about a third of what the game puts in each container on this map
+when the container is first filled, and leaves anything a player puts there
+alone. It only acts on this map's tiles, and the guaranteed rifle is always
+left. To change the amount, edit `KEEP` near the top of
+`common/media/lua/server/KnoxMap/WhiteLakeMuskegon_Loot.lua` in the mod
+folder (1 gives the game's own amounts back). The game's own loot rarity
+setting still applies on top.
 
 ### Trees, flowers and the streets
 

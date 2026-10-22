@@ -205,6 +205,7 @@ def build_window(job: dict) -> dict:
     from generator import osm, renderer
     import knoxbuild.build as kbuild
     import knoxbuild.world as kworld
+    import garages
     import woods
     import details
     import styles
@@ -241,6 +242,12 @@ def build_window(job: dict) -> dict:
     details.install()
     woods.near_lake = lake_mask(fr, x0, y0, w, h)
     woods.install()
+    garages.install()
+    # Buildings laid out here, in this process: knoxbuild's own worker
+    # processes are not forked from this one and would not have the garage
+    # doors. The windows are built several at a time, so the cores are busy
+    # either way.
+    os.environ["KNOXBUILD_WORKERS"] = "1"
     renderer.render(feats, *bbox, meters_per_tile=1.0, output_dir=wdir, map_name=name,
                     spawn_density=s.spawn_density, tree_density=s.tree_density,
                     forest_density=s.forest_density, rotation=sp.rotation,
@@ -547,6 +554,19 @@ def stage_compile(a) -> None:
                          done_file, rules_file, say)
 
 
+def write_loot(mod_root: str) -> None:
+    """The map's loot thinning (whitehall_loot.lua), for this map's tiles."""
+    fr = frame()
+    x0, y0 = WORLD_ORIGIN[0] * CELL, WORLD_ORIGIN[1] * CELL
+    text = open(os.path.join(HERE, "whitehall_loot.lua"), encoding="utf-8").read()
+    for key, value in (("X0", x0), ("Y0", y0), ("X1", x0 + fr.width), ("Y1", y0 + fr.height)):
+        text = text.replace(f"@{key}@", str(value))
+    lua_dir = os.path.join(mod_root, "common", "media", "lua", "server", "KnoxMap")
+    os.makedirs(lua_dir, exist_ok=True)
+    with open(os.path.join(lua_dir, f"{MOD_ID}_Loot.lua"), "w", encoding="utf-8") as f:
+        f.write(text)
+
+
 def stage_mod(a) -> None:
     import details
     import lots
@@ -555,6 +575,7 @@ def stage_mod(a) -> None:
     mods = a.mods_dir or os.path.join(WORK, "mod")
     root, n, extras = lots.package(PROJECT, TITLE, MOD_ID, mods, DESCRIPTION)
     whitehall_map.write_mod_extras(root)
+    write_loot(root)
     maps_dir = os.path.join(root, "common", "media", "maps")
     details.write_worldgen_override(os.path.join(maps_dir, TITLE))
     folders = regions.write_folders(maps_dir, regions.load(os.path.join(WORK, "regions.json")),
@@ -574,7 +595,7 @@ def main(argv=None) -> int:
     ap.add_argument("--stages", default="windows,paste,papermap,compile,mod")
     ap.add_argument("--only", help="windows: just these cores, by name")
     ap.add_argument("--workers", type=int, default=max(1, os.cpu_count() or 2))
-    ap.add_argument("--build-workers", type=int, default=3,
+    ap.add_argument("--build-workers", type=int, default=4,
                     help="windows built at once; each takes 2-4 GB")
     ap.add_argument("--mods-dir", help="where the mod folder goes (default work/whitehall/mod)")
     a = ap.parse_args(argv)

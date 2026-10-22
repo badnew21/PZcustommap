@@ -81,11 +81,16 @@ PLACE_CONFIDENCE = 0.5
 
 # Most footprints here are machine-detected, with no use on them, so the
 # detached garage and the shed out the back came out as tiny houses. An
-# untagged footprint this small with a house-sized one this near is one.
+# untagged footprint this small with a house-sized one this near is one,
 GARAGE_M2 = (30, 85)
 SHED_M2 = (6, 30)
 HOUSE_MIN_M2 = 70
-OUTBUILDING_REACH_M = 30
+OUTBUILDING_REACH_M = 20
+SMALL_HOUSE_M2 = 300
+HOUSE_CLASSES = {"house", "detached", "bungalow", "cabin", "semidetached_house"}
+# ...unless it has this many buildings of about its own size this near.
+COLONY_REACH_M = 30
+COLONY_PEERS = 3
 
 
 def place_tags(r) -> dict | None:
@@ -110,12 +115,16 @@ def _outbuildings(geoms: list, classes: list) -> dict[int, str]:
             "shed" if SHED_M2[0] <= a < SHED_M2[1] else None
         if kind is None:
             continue
-        for j in tree.query(g.buffer(OUTBUILDING_REACH_M)):
-            h = geoms[j]
-            if j != i and h.area >= max(HOUSE_MIN_M2, 2 * a) \
-                    and h.distance(g) <= OUTBUILDING_REACH_M:
-                out[i] = kind
-                break
+        near = [j for j in tree.query(g.buffer(COLONY_REACH_M))
+                if j != i and geoms[j].distance(g) <= COLONY_REACH_M]
+        # A row of small buildings of a size is a colony of cottages or
+        # cabins - the Wabaningo Club's on Murray Road, a campground's - not
+        # a house's garages.
+        if sum(1 for j in near if 0.5 * a <= geoms[j].area <= 2 * a) >= COLONY_PEERS:
+            continue
+        if any(geoms[j].area >= max(HOUSE_MIN_M2, 2 * a)
+               and geoms[j].distance(g) <= OUTBUILDING_REACH_M for j in near):
+            out[i] = kind
     return out
 
 
@@ -264,6 +273,14 @@ class Data:
                 tags["name"] = _name(r)
             if r.get("height"):
                 tags["height"] = f"{float(r['height']):.1f}"
+                # A machine-measured height is to the roof ridge, and KnoxMap
+                # counts a storey per 3 m of it, so a two-storey house under a
+                # steep roof came out three storeys - and at three storeys
+                # KnoxMap builds a block of flats. A small house, or a small
+                # building nobody has tagged, is a house of two.
+                if (r.get("class") or "house") in HOUSE_CLASSES and not r.get("num_floors") \
+                        and g.area < SMALL_HOUSE_M2 and float(r["height"]) >= 8.5:
+                    tags["building:levels"] = "2"
             if r.get("num_floors"):
                 tags["building:levels"] = str(int(r["num_floors"]))
             if r.get("roof_shape"):

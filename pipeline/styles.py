@@ -35,6 +35,9 @@ SHORE_REACH_M = 250       # beach houses: this far from Lake Michigan
 INLAND_LAKE_REACH_M = 130  # cottages: this far from White Lake, Duck Lake, Bear Lake...
 COTTAGE_LAKES = ("White Lake", "Duck Lake", "Little Duck Lake", "Bear Lake",
                  "Muskegon Lake", "Lake Michigan")
+# What else the zones say. KnoxMap reads a big footprint with no use on it as
+# a block of flats now and then; on the shore it is a big beach house.
+SETTINGS = {"shore": {"apartment_chance": 0}, "named": {"apartment_chance": 0}}
 # Buildings whose walls are known, by name.
 NAMED = {"White River Light Station": "brick", "White River Life Saving Station": "clapboard",
          "Montague Armory": "brick", "The Playhouse at White Lake": "clapboard"}
@@ -102,7 +105,7 @@ def write_zones(out_dir: str, map_name: str, feats, data) -> int:
         if outline.geom_type != "Polygon":
             continue
         zones.append({"name": label, "ring": [list(p) for p in outline.exterior.coords[:-1]],
-                      "settings": {}, "wall_style": _draw(mix, u.x, u.y)})
+                      "settings": SETTINGS.get(label, {}), "wall_style": _draw(mix, u.x, u.y)})
     with open(os.path.join(out_dir, f"{map_name}_zones.json"), "w", encoding="utf-8") as fh:
         json.dump(zones, fh)
     return len(zones)
