@@ -368,3 +368,9 @@ it.
 These are real places. The zombies are made up, and so is everything inside
 the buildings. Isle Royale's wolves and moose are real, but they are not in
 the game.
+
+# Also in this repository
+
+[nuclear-option-b36](nuclear-option-b36/README.md): a flyable B-36 Peacemaker for Nuclear
+Option, with working bomb bays and defensive turrets, built from the
+[noahdemar/b36](https://github.com/noahdemar/b36) model.

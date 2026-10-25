@@ -1,0 +1,9 @@
+[project]
+name = "b36-nuclear-option-tools"
+version = "0.1.0"
+description = "Converts the noahdemar/b36 model for the Nuclear Option B-36 mod"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "bpy>=5.0.1",
+    "pillow>=11.0.0",
+]

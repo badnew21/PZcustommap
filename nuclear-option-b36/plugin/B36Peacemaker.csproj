@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Companion BepInEx plugin for the B-36 Peacemaker mod. Build with: dotnet build -c Release
+       Set GamePath in Directory.Build.props (copy Directory.Build.props.template) to your
+       Nuclear Option install folder; the game's own Unity and BepInEx assemblies are referenced. -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>B36Peacemaker</AssemblyName>
+    <RootNamespace>B36Peacemaker</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="b36_rig.json" LogicalName="B36Peacemaker.b36_rig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx" HintPath="$(GamePath)\BepInEx\core\BepInEx.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(GamePath)\NuclearOption_Data\Managed\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(GamePath)\NuclearOption_Data\Managed\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.PhysicsModule" HintPath="$(GamePath)\NuclearOption_Data\Managed\UnityEngine.PhysicsModule.dll" Private="false" />
+    <Reference Include="UnityEngine.JSONSerializeModule" HintPath="$(GamePath)\NuclearOption_Data\Managed\UnityEngine.JSONSerializeModule.dll" Private="false" />
+  </ItemGroup>
+</Project>

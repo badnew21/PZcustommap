@@ -1,0 +1,1409 @@
+{
+ "source": "https://github.com/noahdemar/b36 @ b60dba5e347dd7d3683b42281b7b47ea44694d35",
+ "frame": "Unity model space: +X right wing, +Y up, +Z toward the nose; metres and degrees; origin at mid-length",
+ "length": 49.4,
+ "span": 70.1,
+ "height": 14.25,
+ "cg": [
+  0.0,
+  0.2,
+  2.4
+ ],
+ "landmarks": {
+  "Turret_Nose": [
+   0.0,
+   -0.4791,
+   23.8
+  ],
+  "Turret_Tail": [
+   0.0,
+   0.87,
+   -23.9
+  ],
+  "Prop_L1": [
+   -7.69,
+   0.59618,
+   -2.97379
+  ],
+  "Prop_R1": [
+   7.69,
+   0.59618,
+   -2.97379
+  ],
+  "Rudder": [
+   0.0,
+   2.3,
+   -20.4
+  ]
+ },
+ "parts": [
+  {
+   "name": "Aileron_L",
+   "kind": "aileron",
+   "side": "L",
+   "pivot": [
+    -33.4,
+    1.73159,
+    -2.57342
+   ],
+   "axis": [
+    -0.993873,
+    0.035858,
+    -0.104547
+   ],
+   "angle": 25.0
+  },
+  {
+   "name": "Aileron_R",
+   "kind": "aileron",
+   "side": "R",
+   "pivot": [
+    23.7,
+    1.38163,
+    -1.55306
+   ],
+   "axis": [
+    -0.993873,
+    -0.035858,
+    0.104547
+   ],
+   "angle": 25.0
+  },
+  {
+   "name": "BombDoor_B1_L",
+   "kind": "bombdoor",
+   "side": "L",
+   "bay": 1,
+   "pivot": [
+    0.0,
+    0.0,
+    8.95
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 75.0
+  },
+  {
+   "name": "BombDoor_B1_R",
+   "kind": "bombdoor",
+   "side": "R",
+   "bay": 1,
+   "pivot": [
+    0.0,
+    0.0,
+    8.95
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": -75.0
+  },
+  {
+   "name": "BombDoor_B2_L",
+   "kind": "bombdoor",
+   "side": "L",
+   "bay": 2,
+   "pivot": [
+    0.0,
+    0.0,
+    4.45
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 75.0
+  },
+  {
+   "name": "BombDoor_B2_R",
+   "kind": "bombdoor",
+   "side": "R",
+   "bay": 2,
+   "pivot": [
+    0.0,
+    0.0,
+    4.45
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": -75.0
+  },
+  {
+   "name": "BombDoor_B3_L",
+   "kind": "bombdoor",
+   "side": "L",
+   "bay": 3,
+   "pivot": [
+    0.0,
+    0.0,
+    -3.6
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 75.0
+  },
+  {
+   "name": "BombDoor_B3_R",
+   "kind": "bombdoor",
+   "side": "R",
+   "bay": 3,
+   "pivot": [
+    0.0,
+    0.0,
+    -3.6
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": -75.0
+  },
+  {
+   "name": "BombDoor_B4_L",
+   "kind": "bombdoor",
+   "side": "L",
+   "bay": 4,
+   "pivot": [
+    0.0,
+    0.0,
+    -7.2
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 75.0
+  },
+  {
+   "name": "BombDoor_B4_R",
+   "kind": "bombdoor",
+   "side": "R",
+   "bay": 4,
+   "pivot": [
+    0.0,
+    0.0,
+    -7.2
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": -75.0
+  },
+  {
+   "name": "Elevator_L",
+   "kind": "elevator",
+   "side": "L",
+   "pivot": [
+    -9.9,
+    1.0,
+    -20.33589
+   ],
+   "axis": [
+    -0.999244,
+    -0.0,
+    0.038871
+   ],
+   "angle": 25.0
+  },
+  {
+   "name": "Elevator_R",
+   "kind": "elevator",
+   "side": "R",
+   "pivot": [
+    0.95,
+    1.0,
+    -20.68405
+   ],
+   "axis": [
+    -0.999244,
+    -0.0,
+    -0.038871
+   ],
+   "angle": 25.0
+  },
+  {
+   "name": "Flap_1_L",
+   "kind": "flap",
+   "side": "L",
+   "pivot": [
+    -6.6,
+    0.71775,
+    0.24634
+   ],
+   "axis": [
+    -0.993676,
+    0.040766,
+    -0.104626
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_1_R",
+   "kind": "flap",
+   "side": "R",
+   "pivot": [
+    2.2,
+    0.53724,
+    0.70963
+   ],
+   "axis": [
+    -0.993676,
+    -0.040766,
+    0.104626
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_2_L",
+   "kind": "flap",
+   "side": "L",
+   "pivot": [
+    -12.5,
+    0.95357,
+    -0.37466
+   ],
+   "axis": [
+    -0.993731,
+    0.039501,
+    -0.104589
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_2_R",
+   "kind": "flap",
+   "side": "R",
+   "pivot": [
+    8.75,
+    0.80451,
+    0.02002
+   ],
+   "axis": [
+    -0.993731,
+    -0.039501,
+    0.104589
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_3_L",
+   "kind": "flap",
+   "side": "L",
+   "pivot": [
+    -18.55,
+    1.18799,
+    -1.01126
+   ],
+   "axis": [
+    -0.993781,
+    0.038287,
+    -0.104564
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_3_R",
+   "kind": "flap",
+   "side": "R",
+   "pivot": [
+    14.65,
+    1.03774,
+    -0.60091
+   ],
+   "axis": [
+    -0.993781,
+    -0.038287,
+    0.104564
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_4_L",
+   "kind": "flap",
+   "side": "L",
+   "pivot": [
+    -23.5,
+    1.37421,
+    -1.53202
+   ],
+   "axis": [
+    -0.993825,
+    0.037164,
+    -0.10455
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Flap_4_R",
+   "kind": "flap",
+   "side": "R",
+   "pivot": [
+    20.75,
+    1.27138,
+    -1.24272
+   ],
+   "axis": [
+    -0.993825,
+    -0.037164,
+    0.10455
+   ],
+   "angle": 40.0
+  },
+  {
+   "name": "Wheel_Main_L0",
+   "kind": "wheel",
+   "side": "mainL",
+   "radius": 0.7,
+   "pivot": [
+    -5.62,
+    -3.5,
+    -0.0
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Main_L1",
+   "kind": "wheel",
+   "side": "mainL",
+   "radius": 0.7,
+   "pivot": [
+    -4.78,
+    -3.5,
+    -0.0
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Main_L2",
+   "kind": "wheel",
+   "side": "mainL",
+   "radius": 0.7,
+   "pivot": [
+    -5.62,
+    -3.5,
+    -1.8
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Main_L3",
+   "kind": "wheel",
+   "side": "mainL",
+   "radius": 0.7,
+   "pivot": [
+    -4.78,
+    -3.5,
+    -1.8
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Gear_Main_L",
+   "kind": "gear",
+   "side": "L",
+   "pivot": [
+    -5.2,
+    0.02961,
+    -0.9
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "angle": 91.6732
+  },
+  {
+   "name": "Wheel_Main_R0",
+   "kind": "wheel",
+   "side": "mainR",
+   "radius": 0.7,
+   "pivot": [
+    4.78,
+    -3.5,
+    -0.0
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Main_R1",
+   "kind": "wheel",
+   "side": "mainR",
+   "radius": 0.7,
+   "pivot": [
+    5.62,
+    -3.5,
+    -0.0
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Main_R2",
+   "kind": "wheel",
+   "side": "mainR",
+   "radius": 0.7,
+   "pivot": [
+    4.78,
+    -3.5,
+    -1.8
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Main_R3",
+   "kind": "wheel",
+   "side": "mainR",
+   "radius": 0.7,
+   "pivot": [
+    5.62,
+    -3.5,
+    -1.8
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Gear_Main_R",
+   "kind": "gear",
+   "side": "R",
+   "pivot": [
+    5.2,
+    0.02961,
+    -0.9
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    1.0
+   ],
+   "angle": 91.6732
+  },
+  {
+   "name": "Wheel_Nose0",
+   "kind": "wheel",
+   "side": "nose",
+   "radius": 0.55,
+   "pivot": [
+    -0.3,
+    -3.65,
+    18.85
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Wheel_Nose1",
+   "kind": "wheel",
+   "side": "nose",
+   "radius": 0.55,
+   "pivot": [
+    0.3,
+    -3.65,
+    18.85
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Gear_Nose",
+   "kind": "gear",
+   "side": "C",
+   "pivot": [
+    0.0,
+    -1.57,
+    19.1
+   ],
+   "axis": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "angle": -91.6732
+  },
+  {
+   "name": "Prop_L1",
+   "kind": "prop",
+   "side": "L",
+   "engine": 1,
+   "pivot": [
+    -7.69,
+    0.59618,
+    -2.97379
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Prop_L2",
+   "kind": "prop",
+   "side": "L",
+   "engine": 2,
+   "pivot": [
+    -13.57,
+    0.8731,
+    -3.2741
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Prop_L3",
+   "kind": "prop",
+   "side": "L",
+   "engine": 3,
+   "pivot": [
+    -19.64,
+    1.14763,
+    -3.58348
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Prop_R1",
+   "kind": "prop",
+   "side": "R",
+   "engine": 1,
+   "pivot": [
+    7.69,
+    0.59618,
+    -2.97379
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Prop_R2",
+   "kind": "prop",
+   "side": "R",
+   "engine": 2,
+   "pivot": [
+    13.57,
+    0.8731,
+    -3.2741
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Prop_R3",
+   "kind": "prop",
+   "side": "R",
+   "engine": 3,
+   "pivot": [
+    19.64,
+    1.14763,
+    -3.58348
+   ],
+   "axis": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "angle": 0.0
+  },
+  {
+   "name": "Rudder",
+   "kind": "rudder",
+   "side": "C",
+   "pivot": [
+    0.0,
+    2.3,
+    -20.4
+   ],
+   "axis": [
+    -0.0,
+    -1.0,
+    0.0
+   ],
+   "angle": 25.0
+  }
+ ],
+ "turrets": [
+  {
+   "name": "Turret_LowerAft_L",
+   "guns": "Turret_LowerAft_L_Guns",
+   "kind": "lower",
+   "pivot": [
+    -0.21028,
+    0.04808,
+    -16.1
+   ],
+   "gunsPivot": [
+    -0.21028,
+    0.04808,
+    -16.1
+   ],
+   "retract": 0.95,
+   "extendedPivot": [
+    -0.65628,
+    -0.79072,
+    -16.1
+   ],
+   "yawAxis": [
+    0.469472,
+    0.882948,
+    -0.0
+   ],
+   "pitchAxis": [
+    -0.882948,
+    0.469472,
+    -0.0
+   ],
+   "up": [
+    -0.46947,
+    -0.88295,
+    0.0
+   ],
+   "right": [
+    0.88295,
+    -0.46947,
+    0.0
+   ],
+   "forward": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "limits": {
+    "az": null,
+    "el": [
+     -6,
+     85
+    ]
+   }
+  },
+  {
+   "name": "Turret_LowerAft_R",
+   "guns": "Turret_LowerAft_R_Guns",
+   "kind": "lower",
+   "pivot": [
+    0.21028,
+    0.04808,
+    -16.1
+   ],
+   "gunsPivot": [
+    0.21028,
+    0.04808,
+    -16.1
+   ],
+   "retract": 0.95,
+   "extendedPivot": [
+    0.65628,
+    -0.79072,
+    -16.1
+   ],
+   "yawAxis": [
+    -0.469472,
+    0.882948,
+    -0.0
+   ],
+   "pitchAxis": [
+    -0.882948,
+    -0.469472,
+    0.0
+   ],
+   "up": [
+    0.46947,
+    -0.88295,
+    0.0
+   ],
+   "right": [
+    0.88295,
+    0.46947,
+    -0.0
+   ],
+   "forward": [
+    0.0,
+    -0.0,
+    -1.0
+   ],
+   "limits": {
+    "az": null,
+    "el": [
+     -6,
+     85
+    ]
+   }
+  },
+  {
+   "name": "Turret_Nose",
+   "guns": "Turret_Nose_Guns",
+   "kind": "nose",
+   "pivot": [
+    0.0,
+    -0.4791,
+    23.8
+   ],
+   "gunsPivot": [
+    0.0,
+    -0.4791,
+    23.8
+   ],
+   "retract": 0.0,
+   "extendedPivot": [
+    0.0,
+    -0.4791,
+    23.8
+   ],
+   "yawAxis": [
+    -0.0,
+    0.857493,
+    -0.514496
+   ],
+   "pitchAxis": [
+    1.0,
+    0.0,
+    -0.0
+   ],
+   "up": [
+    0.0,
+    -0.85749,
+    0.5145
+   ],
+   "right": [
+    -1.0,
+    -0.0,
+    0.0
+   ],
+   "forward": [
+    -0.0,
+    0.5145,
+    0.85749
+   ],
+   "limits": {
+    "az": [
+     -30,
+     30
+    ],
+    "el": [
+     -25,
+     45
+    ]
+   }
+  },
+  {
+   "name": "Turret_Tail",
+   "guns": "Turret_Tail_Guns",
+   "kind": "tail",
+   "pivot": [
+    0.0,
+    0.87,
+    -23.9
+   ],
+   "gunsPivot": [
+    0.0,
+    0.87,
+    -23.9
+   ],
+   "retract": 0.0,
+   "extendedPivot": [
+    0.0,
+    0.87,
+    -23.9
+   ],
+   "yawAxis": [
+    -0.0,
+    -1.0,
+    0.0
+   ],
+   "pitchAxis": [
+    1.0,
+    -0.0,
+    0.0
+   ],
+   "up": [
+    0.0,
+    1.0,
+    -0.0
+   ],
+   "right": [
+    -1.0,
+    0.0,
+    -0.0
+   ],
+   "forward": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "limits": {
+    "az": [
+     -40,
+     40
+    ],
+    "el": [
+     -35,
+     40
+    ]
+   }
+  },
+  {
+   "name": "Turret_UpperAft_L",
+   "guns": "Turret_UpperAft_L_Guns",
+   "kind": "upper",
+   "pivot": [
+    -0.22754,
+    0.83399,
+    -15.7
+   ],
+   "gunsPivot": [
+    -0.22754,
+    0.83399,
+    -15.7
+   ],
+   "retract": 0.95,
+   "extendedPivot": [
+    -0.67354,
+    1.67279,
+    -15.7
+   ],
+   "yawAxis": [
+    0.469472,
+    -0.882948,
+    0.0
+   ],
+   "pitchAxis": [
+    -0.882948,
+    -0.469472,
+    0.0
+   ],
+   "up": [
+    -0.46947,
+    0.88295,
+    -0.0
+   ],
+   "right": [
+    0.88295,
+    0.46947,
+    -0.0
+   ],
+   "forward": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "limits": {
+    "az": null,
+    "el": [
+     -6,
+     85
+    ]
+   }
+  },
+  {
+   "name": "Turret_UpperAft_R",
+   "guns": "Turret_UpperAft_R_Guns",
+   "kind": "upper",
+   "pivot": [
+    0.22754,
+    0.83399,
+    -15.7
+   ],
+   "gunsPivot": [
+    0.22754,
+    0.83399,
+    -15.7
+   ],
+   "retract": 0.95,
+   "extendedPivot": [
+    0.67354,
+    1.67279,
+    -15.7
+   ],
+   "yawAxis": [
+    -0.469472,
+    -0.882948,
+    0.0
+   ],
+   "pitchAxis": [
+    -0.882948,
+    0.469472,
+    0.0
+   ],
+   "up": [
+    0.46947,
+    0.88295,
+    -0.0
+   ],
+   "right": [
+    0.88295,
+    -0.46947,
+    -0.0
+   ],
+   "forward": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "limits": {
+    "az": null,
+    "el": [
+     -6,
+     85
+    ]
+   }
+  },
+  {
+   "name": "Turret_UpperFwd_L",
+   "guns": "Turret_UpperFwd_L_Guns",
+   "kind": "upper",
+   "pivot": [
+    -0.41436,
+    0.77929,
+    14.1
+   ],
+   "gunsPivot": [
+    -0.41436,
+    0.77929,
+    14.1
+   ],
+   "retract": 0.95,
+   "extendedPivot": [
+    -0.86035,
+    1.61809,
+    14.1
+   ],
+   "yawAxis": [
+    0.469472,
+    -0.882948,
+    0.0
+   ],
+   "pitchAxis": [
+    -0.882948,
+    -0.469472,
+    0.0
+   ],
+   "up": [
+    -0.46947,
+    0.88295,
+    -0.0
+   ],
+   "right": [
+    0.88295,
+    0.46947,
+    -0.0
+   ],
+   "forward": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "limits": {
+    "az": null,
+    "el": [
+     -6,
+     85
+    ]
+   }
+  },
+  {
+   "name": "Turret_UpperFwd_R",
+   "guns": "Turret_UpperFwd_R_Guns",
+   "kind": "upper",
+   "pivot": [
+    0.41436,
+    0.77929,
+    14.1
+   ],
+   "gunsPivot": [
+    0.41436,
+    0.77929,
+    14.1
+   ],
+   "retract": 0.95,
+   "extendedPivot": [
+    0.86035,
+    1.61809,
+    14.1
+   ],
+   "yawAxis": [
+    -0.469472,
+    -0.882948,
+    0.0
+   ],
+   "pitchAxis": [
+    -0.882948,
+    0.469472,
+    0.0
+   ],
+   "up": [
+    0.46947,
+    0.88295,
+    -0.0
+   ],
+   "right": [
+    0.88295,
+    -0.46947,
+    -0.0
+   ],
+   "forward": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "limits": {
+    "az": null,
+    "el": [
+     -6,
+     85
+    ]
+   }
+  }
+ ],
+ "legs": [
+  {
+   "leg": "mainL",
+   "wheels": [
+    "Wheel_Main_L0",
+    "Wheel_Main_L1",
+    "Wheel_Main_L2",
+    "Wheel_Main_L3"
+   ],
+   "radius": 0.7,
+   "center": [
+    -5.2,
+    -3.5,
+    -0.9
+   ],
+   "contact": [
+    -5.2,
+    -4.2,
+    -0.9
+   ]
+  },
+  {
+   "leg": "mainR",
+   "wheels": [
+    "Wheel_Main_R0",
+    "Wheel_Main_R1",
+    "Wheel_Main_R2",
+    "Wheel_Main_R3"
+   ],
+   "radius": 0.7,
+   "center": [
+    5.2,
+    -3.5,
+    -0.9
+   ],
+   "contact": [
+    5.2,
+    -4.2,
+    -0.9
+   ]
+  },
+  {
+   "leg": "nose",
+   "wheels": [
+    "Wheel_Nose0",
+    "Wheel_Nose1"
+   ],
+   "radius": 0.55,
+   "center": [
+    0.0,
+    -3.65,
+    18.85
+   ],
+   "contact": [
+    0.0,
+    -4.2,
+    18.85
+   ]
+  }
+ ],
+ "bays": [
+  {
+   "index": 1,
+   "zFwd": 11.1,
+   "zAft": 6.8,
+   "doors": [
+    "BombDoor_B1_L",
+    "BombDoor_B1_R"
+   ],
+   "topY": 1.87,
+   "bottomY": -1.87,
+   "halfWidth": 1.87,
+   "hardpointY": 1.52
+  },
+  {
+   "index": 2,
+   "zFwd": 6.6,
+   "zAft": 2.3,
+   "doors": [
+    "BombDoor_B2_L",
+    "BombDoor_B2_R"
+   ],
+   "topY": 1.87,
+   "bottomY": -1.87,
+   "halfWidth": 1.87,
+   "hardpointY": 1.52
+  },
+  {
+   "index": 3,
+   "zFwd": -1.9,
+   "zAft": -5.3,
+   "doors": [
+    "BombDoor_B3_L",
+    "BombDoor_B3_R"
+   ],
+   "topY": 1.87,
+   "bottomY": -1.8644,
+   "halfWidth": 1.87,
+   "hardpointY": 1.52
+  },
+  {
+   "index": 4,
+   "zFwd": -5.5,
+   "zAft": -8.9,
+   "doors": [
+    "BombDoor_B4_L",
+    "BombDoor_B4_R"
+   ],
+   "topY": 1.87,
+   "bottomY": -1.87,
+   "halfWidth": 1.87,
+   "hardpointY": 1.52
+  }
+ ],
+ "exhausts": [
+  {
+   "name": "Exhaust_L1_0",
+   "jet": false,
+   "pos": [
+    -8.63,
+    0.09618,
+    -2.72379
+   ]
+  },
+  {
+   "name": "Exhaust_L1_1",
+   "jet": false,
+   "pos": [
+    -6.75,
+    0.09618,
+    -2.72379
+   ]
+  },
+  {
+   "name": "Exhaust_L2_0",
+   "jet": false,
+   "pos": [
+    -14.51,
+    0.3731,
+    -3.0241
+   ]
+  },
+  {
+   "name": "Exhaust_L2_1",
+   "jet": false,
+   "pos": [
+    -12.63,
+    0.3731,
+    -3.0241
+   ]
+  },
+  {
+   "name": "Exhaust_L3_0",
+   "jet": false,
+   "pos": [
+    -20.58,
+    0.64763,
+    -3.33348
+   ]
+  },
+  {
+   "name": "Exhaust_L3_1",
+   "jet": false,
+   "pos": [
+    -18.7,
+    0.64763,
+    -3.33348
+   ]
+  },
+  {
+   "name": "Exhaust_R1_0",
+   "jet": false,
+   "pos": [
+    8.63,
+    0.09618,
+    -2.72379
+   ]
+  },
+  {
+   "name": "Exhaust_R1_1",
+   "jet": false,
+   "pos": [
+    6.75,
+    0.09618,
+    -2.72379
+   ]
+  },
+  {
+   "name": "Exhaust_R2_0",
+   "jet": false,
+   "pos": [
+    14.51,
+    0.3731,
+    -3.0241
+   ]
+  },
+  {
+   "name": "Exhaust_R2_1",
+   "jet": false,
+   "pos": [
+    12.63,
+    0.3731,
+    -3.0241
+   ]
+  },
+  {
+   "name": "Exhaust_R3_0",
+   "jet": false,
+   "pos": [
+    20.58,
+    0.64763,
+    -3.33348
+   ]
+  },
+  {
+   "name": "Exhaust_R3_1",
+   "jet": false,
+   "pos": [
+    18.7,
+    0.64763,
+    -3.33348
+   ]
+  },
+  {
+   "name": "JetExhaust_L0",
+   "jet": true,
+   "pos": [
+    -25.27,
+    -0.95481,
+    -1.3
+   ]
+  },
+  {
+   "name": "JetExhaust_L1",
+   "jet": true,
+   "pos": [
+    -26.33,
+    -0.95481,
+    -1.3
+   ]
+  },
+  {
+   "name": "JetExhaust_R0",
+   "jet": true,
+   "pos": [
+    25.27,
+    -0.95481,
+    -1.3
+   ]
+  },
+  {
+   "name": "JetExhaust_R1",
+   "jet": true,
+   "pos": [
+    26.33,
+    -0.95481,
+    -1.3
+   ]
+  }
+ ],
+ "wingtips": {
+  "L": [
+   -34.9422,
+   1.7745,
+   -2.0802
+  ],
+  "R": [
+   34.9422,
+   1.7745,
+   -2.0802
+  ]
+ }
+}

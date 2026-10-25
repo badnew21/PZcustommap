@@ -1,0 +1,6 @@
+<Project>
+  <!-- Copy to Directory.Build.props and point GamePath at your Nuclear Option folder. -->
+  <PropertyGroup>
+    <GamePath>C:\Program Files (x86)\Steam\steamapps\common\Nuclear Option</GamePath>
+  </PropertyGroup>
+</Project>

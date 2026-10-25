@@ -2,3 +2,5 @@
 work/
 __pycache__/
 *.pyc
+# Nuclear Option B-36: cloned source model and converter output
+nuclear-option-b36/tools/.cache/
