@@ -86,11 +86,11 @@ plugin.
    `B36_Peacemaker.prefab`, its definition and a hangar op into the mod folder. The hangar op
    puts the B-36 in every hangar; edit `Ops/OpAddB36ToHangars.asset` to narrow that down.
 
-4. Build the plugin: copy `plugin/Directory.Build.props.template` to
-   `plugin/Directory.Build.props`, set `GamePath`, then `dotnet build -c Release` in `plugin/`.
+4. The plugin is prebuilt at `release/B36Peacemaker.dll` (built against BepInEx 5.4.23.2).
+   To build it yourself, copy `plugin/Directory.Build.props.template` to
+   `plugin/Directory.Build.props`, set `GamePath`, then run `dotnet build -c Release` in `plugin/`.
 
-5. Put `B-36 Peacemaker_<version>.nobp` and `plugin/bin/Release/netstandard2.1/B36Peacemaker.dll`
-   in `BepInEx/plugins/`.
+5. Put `B-36 Peacemaker_<version>.nobp` and `B36Peacemaker.dll` in `BepInEx/plugins/`.
 
 The aircraft works without the plugin, but its doors, gear, turrets and propellers won't
 move.
