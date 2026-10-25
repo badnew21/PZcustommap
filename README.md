@@ -9,6 +9,7 @@ Build 42 maps of real places at one tile to the metre, made with
 | [Isle Royale](#isle-royale) | Isle Royale National Park, Michigan: 570 km² of island wilderness in Lake Superior | `release/IsleRoyale.7z.001`–`.005` (425 MB, 11 GB unpacked) |
 | [Evanston](#evanston) | Evanston, Illinois: the whole city inside its real boundary, on Lake Michigan | `release/Evanston.7z` (41 MB, 690 MB unpacked) |
 | [Evanston: Central Street test](#true-to-life-test-central-street) | North Evanston from Bent Park to Sheridan Road and down Ridgeway Avenue, built with real building outlines, street lines and heights | `release/EvanstonCentral.7z` (10 MB) |
+| [Soldiers Left Behind](scenarios/README.md) | A scenario mod for vanilla Knox County: three soldiers left behind, starting in a fortified and stocked Muldraugh police station | `release/SoldiersLeftBehind.zip` |
 
 The two sit side by side in the game world, so both mods can be installed at
 once. See [Installing](#installing) for how to put one in the game.
